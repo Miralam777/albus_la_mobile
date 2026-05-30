@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "64747860991",
+    "project_id": "lookapp-474d1",
+    "storage_bucket": "lookapp-474d1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64747860991:android:d7bf4e72dca2f9b5d36dca",
+        "android_client_info": {
+          "package_name": "de.albus7.albus_la_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZYqDtwoJ-HzJu-4Uy6PZZ9MQtzuPaZIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64747860991:android:dfcefbd8f413489fd36dca",
+        "android_client_info": {
+          "package_name": "de.albus7.lookapp_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZYqDtwoJ-HzJu-4Uy6PZZ9MQtzuPaZIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

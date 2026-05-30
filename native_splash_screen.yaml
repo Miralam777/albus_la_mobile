@@ -1,0 +1,20 @@
+# ! run this cmd
+# dart run flutter_native_splash:create --path=C:\..\..\..\native_splash_screen.yaml
+
+flutter_native_splash:
+  color: "#E3E3E3"
+  color_dark: "#111010"
+  image: assets/splash/splash_icon.png
+  # image_dark: assets/splash/splash_dark.png
+  # branding: assets/splash/branding.png
+  # background_image: assets/splash/background.png
+
+  #! if use this should use this line in app
+  # SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top],);
+  # fullscreen: true
+
+  android_12:
+    color: "#E3E3E3"
+    color_dark: "#111010"
+
+  web: false

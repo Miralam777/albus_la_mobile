@@ -1,0 +1,22 @@
+import 'package:a_zebra_utils/src/enumerators/cause.dart';
+import 'package:a_zebra_utils/src/enumerators/status.dart';
+
+/// Created by luis901101 on 2020-01-07.
+class StatusInfo {
+  final Status status;
+  final Cause cause;
+
+  StatusInfo(Status? status, Cause? cause)
+      : status = status ?? Status.UNKNOWN,
+        cause = cause ?? Cause.UNKNOWN;
+
+  Map<String, dynamic> toMap() => <String, dynamic>{
+        'status': status.name,
+        'cause': cause.name,
+      };
+
+  factory StatusInfo.fromMap(Map<dynamic, dynamic> map) => StatusInfo(
+        StatusUtils.valueOf(map['status']),
+        CauseUtils.valueOf(map['cause']),
+      );
+}
