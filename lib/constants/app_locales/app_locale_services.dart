@@ -71,11 +71,11 @@ class AppLocaleServices {
         carLabel: CarLabelPdfLocaleModel(
           locale: 'de',
           contactTitle: 'KFZ-HALTER',
-          // contactTitleFontSize: 16.2,
-          contactTitleFontSize: 20.0,
+          contactTitleFontSize: 16.2,
+          // contactTitleFontSize: 20.0,
           contactSubtitle: 'KONTAKTIEREN',
-          // contactSubtitleFontSize: 13.5,
-          contactSubtitleFontSize: 16.6,
+          contactSubtitleFontSize: 13.5,
+          // contactSubtitleFontSize: 16.6,
         ),
         // TODO:
         keychain: KeychainPdfLocaleModel(

@@ -169,6 +169,7 @@ class CarLabelPdfUtils {
     final pdf = Document(version: PdfVersion.pdf_1_5, compress: true);
 
     final font = await PdfGoogleFonts.jetBrainsMonoBold();
+    final idFont = await PdfGoogleFonts.jetBrainsMonoBold();
     const format = PdfPageFormat.cm;
 
     final totalPagesInChunk = (products.length / labelsPerPage).ceil();
@@ -189,9 +190,10 @@ class CarLabelPdfUtils {
         groupNr: groupNr,
         launchIcon: launchIcon,
         // child: _carLabel(
-        child: _carLabelV3(
+        child: _carLabel(
           carLabelPdfLocale: carLabelPdfLocale,
           font: font,
+          idFont: idFont,
           format: format,
           qrId: 'testQrId77',
           launchIcon: launchIcon,
@@ -231,19 +233,18 @@ class CarLabelPdfUtils {
                       crossAxisCount: 3,
                       childAspectRatio: 1.37,
                       children: List.generate(pageProducts.length, (i) {
-                        return _carLabelV3(
-                          // index: globalStartIndex + i,
-                          index: pageProducts[i].index,
-                          carLabelPdfLocale: carLabelPdfLocale,
-                          font: font,
-                          format: format,
-                          qrId: pageProducts[i].id,
-                          // qrId: 'KFZ1HALTER',
-                          launchIcon: launchIcon,
-                          appStoreImage: appStoreImage,
-                          playStoreImage: playStoreImage,
-                        );
                         return _carLabel(
+                          index: pageProducts[i].index,
+                          carLabelPdfLocale: carLabelPdfLocale,
+                          font: font,
+                          idFont: idFont,
+                          format: format,
+                          qrId: pageProducts[i].id,
+                          launchIcon: launchIcon,
+                          appStoreImage: appStoreImage,
+                          playStoreImage: playStoreImage,
+                        );
+                        /*   return _carLabel(
                           // index: globalStartIndex + i,
                           index: pageProducts[i].index,
                           carLabelPdfLocale: carLabelPdfLocale,
@@ -253,7 +254,7 @@ class CarLabelPdfUtils {
                           launchIcon: launchIcon,
                           appStoreImage: appStoreImage,
                           playStoreImage: playStoreImage,
-                        );
+                        ); */
                       }),
                     ),
                   ),
@@ -295,6 +296,7 @@ class CarLabelPdfUtils {
     )).buffer.asUint8List();
 
     final font = await PdfGoogleFonts.jetBrainsMonoBold();
+    final idFont = await PdfGoogleFonts.jetBrainsMonoBold();
     const format = PdfPageFormat.cm;
 
     final pdf = Document(version: PdfVersion.pdf_1_5, compress: true);
@@ -306,10 +308,11 @@ class CarLabelPdfUtils {
       genProducts: genProducts,
       version: localeModel.languageModel.de,
       launchIconBytes: launchIconBytes,
-      // child: _carLabel(
-      child: _carLabelV3(
+
+      child: _carLabel(
         carLabelPdfLocale: localeModel.pdfLocaleModel.carLabel,
         font: font,
+        idFont: idFont,
         format: format,
         qrId: 'testQrId77',
         launchIcon: MemoryImage(launchIconBytes),
@@ -322,7 +325,182 @@ class CarLabelPdfUtils {
   }
 
   //! ******************* widget
-  static Column _carLabelV3({
+  static Column _carLabel({
+    int? index,
+    required CarLabelPdfLocaleModel carLabelPdfLocale,
+    required Font font,
+    required Font idFont,
+    required double format,
+    required String? qrId,
+    required MemoryImage launchIcon,
+    required MemoryImage appStoreImage,
+    required MemoryImage playStoreImage,
+  }) {
+    final paddging = 0.3 * format;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (index != null) SizedBox(height: 10),
+        if (index != null)
+          Text(
+            '$index',
+            style: TextStyle(
+              fontSize: 15.0,
+              font: font,
+              color: PdfColors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        SizedBox(height: 2),
+        Container(
+          width: 5.5 * format,
+          alignment: Alignment.topCenter,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(K.rl),
+            gradient: const LinearGradient(
+              begin: Alignment.bottomRight,
+              end: Alignment.topLeft,
+              stops: [0.5, 0.7, 0.9],
+              colors: [
+                PdfColor.fromInt(0xFF013069),
+                PdfColor.fromInt(0xFF0e4c96),
+                PdfColor.fromInt(0xFF1161bf),
+              ],
+            ),
+          ),
+          child: ClipRRect(
+            verticalRadius: K.rl,
+            horizontalRadius: K.rl,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                //! ************** look app logo and name and appstors icons
+                SizedBox(height: paddging * 0.5),
+                Image(launchIcon, width: 1.5 * format),
+                Text(
+                  'LookApp',
+                  style: TextStyle(
+                    fontSize: 18.5,
+                    fontWeight: FontWeight.bold,
+                    color: PdfColors.white,
+                    letterSpacing: 0,
+                  ),
+                ),
+
+                //! ************** qrcode container
+                SizedBox(height: paddging * 0.5),
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: PdfColors.white,
+                    borderRadius: BorderRadius.circular(K.rm),
+                  ),
+                  child: BarcodeWidget(
+                    /* height: 2.8 * format,
+                width: 2.8 * format, */
+                    height: 2.5 * format,
+                    width: 2.5 * format,
+                    padding: EdgeInsets.zero,
+                    data: '${K.lookAppMsgBaseUrl}$qrId',
+                    barcode: Barcode.qrCode(),
+                  ),
+                ),
+                SizedBox(height: paddging * 0.5),
+                Text(
+                  'ID: $qrId',
+                  style: TextStyle(
+                    fontSize: 8.0,
+                    font: idFont,
+                    color: PdfColors.white,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+
+                //! ************** contact texts container
+                SizedBox(height: paddging * 0.15),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                          lineSpacing: -6.0,
+                          font: font,
+                          color: PdfColors.white,
+                        ),
+                        children: [
+                          TextSpan(
+                            // text: '${qrCodeLocaleModel.carLabelTitle}\n',
+                            text: '${carLabelPdfLocale.contactTitle}\n',
+                            style: TextStyle(
+                              // fontSize: qrCodeLocaleModel.carLabelTitleFontSize,
+                              fontSize: carLabelPdfLocale.contactTitleFontSize,
+                            ),
+                          ),
+                          TextSpan(
+                            // text: qrCodeLocaleModel.carLabelSubtitle,
+                            text: carLabelPdfLocale.contactSubtitle,
+                            style: TextStyle(
+                              // fontSize: qrCodeLocaleModel.carLabelSubtitleFontSize,
+                              fontSize:
+                                  carLabelPdfLocale.contactSubtitleFontSize,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 0.5 * format,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 0.15,
+                              horizontal: 0.12,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(2),
+                              border: Border.all(
+                                color: PdfColors.white,
+                                width: 1,
+                              ),
+                            ),
+                            child: Image(appStoreImage),
+                          ),
+                          SizedBox(width: 0.1 * format),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 0.15,
+                              horizontal: 0.12,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(2),
+                              border: Border.all(
+                                color: PdfColors.white,
+                                width: 1,
+                              ),
+                            ),
+                            child: Image(playStoreImage),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: paddging * 0.5),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /*   static Column _carLabelV3({
     int? index,
     required CarLabelPdfLocaleModel carLabelPdfLocale,
     required Font font,
@@ -535,9 +713,9 @@ class CarLabelPdfUtils {
         ),
       ],
     );
-  }
+  } */
 
-  static Column _carLabel({
+  /*   static Column _carLabel({
     int? index,
     required CarLabelPdfLocaleModel carLabelPdfLocale,
     required Font font,
@@ -706,5 +884,5 @@ class CarLabelPdfUtils {
         ),
       ],
     );
-  }
+  } */
 }

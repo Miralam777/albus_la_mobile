@@ -1213,7 +1213,7 @@ class PdfUtilsHelper {
                     SizedBox(width: 10.0),
                     Text(
                       // TODO: firma name
-                      'Sky Link 3',
+                      'Albus7',
                       style: TextStyle(
                         fontSize: 25.0,
                         fontWeight: FontWeight.bold,
