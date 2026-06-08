@@ -1,11 +1,8 @@
-import 'dart:ui';
-
 import 'package:albus_la_mobile/configs/services/firebase/firestore_service.dart';
 import 'package:albus_la_mobile/constants/consts.dart';
 import 'package:albus_la_mobile/constants/icons.dart';
 import 'package:albus_la_mobile/core/utils/helpers/bloc_events_helper.dart';
 import 'package:albus_la_mobile/core/utils/helpers/media_helper.dart';
-import 'package:albus_la_mobile/core/widgets/loading_indicator.dart';
 import 'package:albus_la_mobile/core/widgets/page_stack_loading.dart';
 import 'package:albus_la_mobile/core/widgets/primary_app_bar.dart';
 import 'package:albus_la_mobile/core/widgets/svg_un_draw_image.dart';
@@ -24,20 +21,26 @@ class AddProductGroupPage extends StatefulWidget {
 }
 
 class _AddProductGroupPageState extends State<AddProductGroupPage> {
-  late TextEditingController _tecName, _tecQuantity, _tecDescription;
+  late TextEditingController _tecName,
+      _tecQuantity,
+      _tecValidityYears,
+      _tecDescription;
 
   bool _nameTecError = false;
   bool _quantityTecError = false;
+  bool _validityYearsTecError = false;
 
   bool _isAdding = false;
-
   int _uploadPercent = 0;
+
+  bool _deletable = false;
 
   @override
   void initState() {
-    _tecName = TextEditingController(text: 'Test');
-    _tecQuantity = TextEditingController(text: '5');
-    _tecDescription = TextEditingController(text: 'Test Menge 5');
+    _tecName = TextEditingController();
+    _tecQuantity = TextEditingController();
+    _tecValidityYears = TextEditingController();
+    _tecDescription = TextEditingController();
 
     super.initState();
   }
@@ -46,6 +49,7 @@ class _AddProductGroupPageState extends State<AddProductGroupPage> {
   void dispose() {
     _tecName.dispose();
     _tecQuantity.dispose();
+    _tecValidityYears.dispose();
     _tecDescription.dispose();
     super.dispose();
   }
@@ -120,6 +124,26 @@ class _AddProductGroupPageState extends State<AddProductGroupPage> {
                 ),
                 K.pvm.verticalSpace,
                 TextFieldWidget(
+                  controller: _tecValidityYears,
+                  // TODO: text
+                  hintText: 'Gültigkeitsjahre',
+                  keyType: TextInputType.datetime,
+                  suffixIcon: I.size,
+                  // TODO: text
+                  errorText: _validityYearsTecError
+                      ? 'Es muss eine ganze Zahl sein.'
+                      : null,
+                  // TODO: text
+                  helperText: 'z. B. 5 oder 10 Jahre',
+                  maxLength: 2,
+                  onChanged: (val) {
+                    if (_validityYearsTecError && (val ?? '').isNotEmpty) {
+                      setState(() => _validityYearsTecError = false);
+                    }
+                  },
+                ),
+                K.pvm.verticalSpace,
+                TextFieldWidget(
                   controller: _tecDescription,
                   // TODO: text
                   hintText: 'Beschreibung',
@@ -128,6 +152,23 @@ class _AddProductGroupPageState extends State<AddProductGroupPage> {
                   maxLength: 500,
                   minLines: 3,
                   maxLines: 5,
+                ),
+                K.pvm.verticalSpace,
+                ListTile(
+                  // contentPadding: EdgeInsets.zero,
+                  title: Text(
+                    // TODO: text,
+                    'Löschen erlauben',
+                  ),
+                  // TODO: text,
+                  subtitle: Text(
+                    'Erlaubt das Löschen von Produkten dieser Gruppe.',
+                    overflow: TextOverflow.clip,
+                  ),
+                  trailing: Switch(
+                    value: _deletable,
+                    onChanged: (val) => setState(() => _deletable = val),
+                  ),
                 ),
                 K.pvl2x.verticalSpace,
                 SizedBox(
@@ -179,6 +220,15 @@ class _AddProductGroupPageState extends State<AddProductGroupPage> {
       return;
     }
 
+    //! validity years check
+    final trimedValidityYears = _tecValidityYears.text.trim();
+    int? validityYearsInt = int.tryParse(trimedValidityYears);
+    print('validityYearsInt: $validityYearsInt');
+    if (validityYearsInt == null) {
+      setState(() => _validityYearsTecError = true);
+      return;
+    }
+
     setState(() => _isAdding = true);
 
     final uId = BlocEventsHelper.getSettings(context).uId;
@@ -188,9 +238,11 @@ class _AddProductGroupPageState extends State<AddProductGroupPage> {
         creator: uId,
         name: _tecName.text.trim(),
         quantity: quantityInt,
+        validityYears: validityYearsInt,
         description: _tecDescription.text.trim(),
+        deletable: _deletable,
         // TODO:
-        pName: 'Product',
+        pName: 'Carlabel',
         // TODO:
         pId: 123456789,
         // TODO:

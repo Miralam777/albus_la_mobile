@@ -252,6 +252,7 @@ class FirestoreService {
       productId: group.pId,
       type: group.pType,
       groupNr: groupNumber,
+      validityYears: group.validityYears,
       uId: null,
     ).toMap();
 

@@ -15,6 +15,7 @@ class GenProduct {
   final String? pin;
   final int? productId;
   final int? type;
+  final int? validityYears;
   final String? uId;
 
   const GenProduct({
@@ -29,38 +30,41 @@ class GenProduct {
     this.pin,
     this.productId,
     this.type,
+    this.validityYears,
     this.uId,
   });
 
   factory GenProduct.fromMap(Map<String, dynamic> data) => GenProduct(
-        index: data['index'] as int?,
-        createdAt: data['createdAt'] as Timestamp?,
-        creator: data['creator'] as String?,
-        groupNr: data['groupNr'] as int?,
-        imageUrl: data['imageUrl'] as int?,
-        id: data['id'] as String?,
-        manufactured: data['manufactured'] as bool?,
-        name: data['name'] as String?,
-        pin: data['pin'] as String?,
-        productId: data['productId'] as int?,
-        type: data['type'] as int?,
-        uId: data['uId'] as String?,
-      );
+    index: data['index'] as int?,
+    createdAt: data['createdAt'] as Timestamp?,
+    creator: data['creator'] as String?,
+    groupNr: data['groupNr'] as int?,
+    imageUrl: data['imageUrl'] as int?,
+    id: data['id'] as String?,
+    manufactured: data['manufactured'] as bool?,
+    name: data['name'] as String?,
+    pin: data['pin'] as String?,
+    productId: data['productId'] as int?,
+    type: data['type'] as int?,
+    validityYears: data['validityYears'] as int?,
+    uId: data['uId'] as String?,
+  );
 
   Map<String, dynamic> toMap() => {
-        'index': index,
-        'createdAt': createdAt,
-        'creator': creator,
-        'groupNr': groupNr,
-        'imageUrl': imageUrl,
-        'id': id,
-        'manufactured': manufactured,
-        'name': name,
-        'pin': pin,
-        'productId': productId,
-        'type': type,
-        'uId': uId,
-      };
+    'index': index,
+    'createdAt': createdAt,
+    'creator': creator,
+    'groupNr': groupNr,
+    'imageUrl': imageUrl,
+    'id': id,
+    'manufactured': manufactured,
+    'name': name,
+    'pin': pin,
+    'productId': productId,
+    'type': type,
+    'validityYears': validityYears,
+    'uId': uId,
+  };
 
   /// `dart:convert`
   ///
@@ -87,6 +91,7 @@ class GenProduct {
     String? pin,
     int? productId,
     int? type,
+    int? validityYears,
     String? uId,
   }) {
     return GenProduct(
@@ -101,40 +106,43 @@ class GenProduct {
       pin: pin ?? this.pin,
       productId: productId ?? this.productId,
       type: type ?? this.type,
+      validityYears: validityYears ?? this.validityYears,
       uId: uId ?? this.uId,
     );
   }
 
   ///! only of generat PDF
   factory GenProduct.fromMapGenPdf(Map<String, dynamic> data) => GenProduct(
-        // createdAt: data['createdAt'] as Timestamp?,
-        index: data['index'] as int?,
-        creator: data['creator'] as String?,
-        groupNr: data['groupNr'] as int?,
-        imageUrl: data['imageUrl'] as int?,
-        id: data['id'] as String?,
-        manufactured: data['manufactured'] as bool?,
-        name: data['name'] as String?,
-        pin: data['pin'] as String?,
-        productId: data['productId'] as int?,
-        type: data['type'] as int?,
-        uId: data['uId'] as String?,
-      );
+    // createdAt: data['createdAt'] as Timestamp?,
+    index: data['index'] as int?,
+    creator: data['creator'] as String?,
+    groupNr: data['groupNr'] as int?,
+    imageUrl: data['imageUrl'] as int?,
+    id: data['id'] as String?,
+    manufactured: data['manufactured'] as bool?,
+    name: data['name'] as String?,
+    pin: data['pin'] as String?,
+    productId: data['productId'] as int?,
+    type: data['type'] as int?,
+    validityYears: data['validityYears'] as int?,
+    uId: data['uId'] as String?,
+  );
 
   Map<String, dynamic> toMapGenPdf() => {
-        // 'createdAt': createdAt,
-        'index': index,
-        'creator': creator,
-        'groupNr': groupNr,
-        'imageUrl': imageUrl,
-        'id': id,
-        'manufactured': manufactured,
-        'name': name,
-        'pin': pin,
-        'productId': productId,
-        'type': type,
-        'uId': uId,
-      };
+    // 'createdAt': createdAt,
+    'index': index,
+    'creator': creator,
+    'groupNr': groupNr,
+    'imageUrl': imageUrl,
+    'id': id,
+    'manufactured': manufactured,
+    'name': name,
+    'pin': pin,
+    'productId': productId,
+    'type': type,
+    'validityYears': validityYears,
+    'uId': uId,
+  };
 
   /// `dart:convert`
   ///

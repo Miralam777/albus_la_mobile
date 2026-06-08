@@ -10,9 +10,11 @@ class ProductGroupModel {
   final String? name;
   final int? groupNr;
   final int? quantity;
+  final int? validityYears;
   final String? description;
   final Timestamp? created;
   final String? creator;
+  final bool? deletable;
 
   const ProductGroupModel({
     this.dId,
@@ -22,9 +24,11 @@ class ProductGroupModel {
     this.name,
     this.groupNr,
     this.quantity,
+    this.validityYears,
     this.description,
     this.created,
     this.creator,
+    this.deletable,
   });
 
   factory ProductGroupModel.fromMap(Map<String, dynamic> data) =>
@@ -36,23 +40,27 @@ class ProductGroupModel {
         name: data['name'] as String?,
         groupNr: data['groupNr'] as int?,
         quantity: data['quantity'] as int?,
+        validityYears: data['validityYears'] as int?,
         description: data['description'] as String?,
         created: data['created'] as Timestamp?,
         creator: data['creator'] as String?,
+        deletable: data['deletable'] as bool?,
       );
 
   Map<String, dynamic> toMap() => {
-        'dId': dId,
-        'pId': pId,
-        'pType': pType,
-        'pName': pName,
-        'name': name,
-        'groupNr': groupNr,
-        'quantity': quantity,
-        'description': description,
-        'created': created,
-        'creator': creator,
-      };
+    'dId': dId,
+    'pId': pId,
+    'pType': pType,
+    'pName': pName,
+    'name': name,
+    'groupNr': groupNr,
+    'quantity': quantity,
+    'validityYears': validityYears,
+    'description': description,
+    'created': created,
+    'creator': creator,
+    'deletable': deletable,
+  };
 
   /// `dart:convert`
   ///
@@ -74,9 +82,11 @@ class ProductGroupModel {
     String? name,
     int? groupNr,
     int? quantity,
+    int? validityYears,
     String? description,
     Timestamp? created,
     String? creator,
+    bool? deletable,
   }) {
     return ProductGroupModel(
       dId: dId ?? this.dId,
@@ -86,9 +96,11 @@ class ProductGroupModel {
       name: name ?? this.name,
       groupNr: groupNr ?? this.groupNr,
       quantity: quantity ?? this.quantity,
+      validityYears: validityYears ?? this.validityYears,
       description: description ?? this.description,
       created: created ?? this.created,
       creator: creator ?? this.creator,
+      deletable: deletable ?? this.deletable,
     );
   }
 }

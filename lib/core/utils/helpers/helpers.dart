@@ -70,15 +70,17 @@ class Helpers {
   /// generate int id 6-character from **'0-9'**
   /// default length **'6'**
   static int genIntId({int length = 6}) {
-    const characters = '0123456789';
+    const digits = '0123456789';
+    const nonZeroDigits = '123456789';
     final random = Random();
 
-    final productString = List.generate(
-      length,
-      (index) => characters[random.nextInt(characters.length)],
+    final first = nonZeroDigits[random.nextInt(nonZeroDigits.length)];
+    final rest = List.generate(
+      length - 1,
+      (_) => digits[random.nextInt(digits.length)],
     ).join();
 
-    return int.parse(productString);
+    return int.parse('$first$rest');
   }
 
   static String? getProductIdFromUrl(String? url) {

@@ -1,4 +1,3 @@
-import 'package:albus_la_mobile/configs/routes/routes.dart';
 import 'package:albus_la_mobile/configs/services/firebase/firestore_service.dart';
 import 'package:albus_la_mobile/constants/consts.dart';
 import 'package:albus_la_mobile/constants/icons.dart';
@@ -10,7 +9,6 @@ import 'package:albus_la_mobile/core/widgets/loading_indicator.dart';
 import 'package:albus_la_mobile/core/widgets/nfc/nfc_read_icon_btn.dart';
 import 'package:albus_la_mobile/core/widgets/nfc/nfc_write_icon_btn.dart';
 import 'package:albus_la_mobile/core/widgets/page_stack_loading.dart';
-import 'package:albus_la_mobile/core/widgets/primary_app_bar.dart';
 import 'package:albus_la_mobile/core/widgets/text_field.dart';
 import 'package:albus_la_mobile/features/add_product_id/presentation/models/product_group_model.dart';
 import 'package:albus_la_mobile/features/add_product_id/presentation/widgets/products_pdf_btm_nav_sheet/products_pdf_btm_nav_sheet.dart';
@@ -39,6 +37,10 @@ class _ProductsPageState extends State<ProductsPage> {
   List<GenProduct> _allProducts = [];
   List<GenProduct> _filteredProducts = [];
   bool _isDeleting = false;
+
+  bool _areProductsPinsOk = false;
+  bool _areProductsIdsOk = false;
+  bool _areProductsTypesOk = false;
 
   @override
   void initState() {
@@ -75,6 +77,9 @@ class _ProductsPageState extends State<ProductsPage> {
         _allProducts = products;
         _filteredProducts = products;
         _isLoading = false;
+        _areProductsPinsOk = _checkProduktsPinsOk();
+        _areProductsIdsOk = _checkProduktsIdsOk();
+        _areProductsTypesOk = _checkProduktsTypesOk();
       });
     } catch (error) {
       print('Error loading products: $error');
@@ -92,6 +97,42 @@ class _ProductsPageState extends State<ProductsPage> {
         );
       }
     }
+  }
+
+  bool _checkProduktsPinsOk() {
+    for (int i = 0; i < _allProducts.length; i++) {
+      print(
+        'I: $i ID: ${_allProducts[i].id} PIN: ${_allProducts[i].pin} LENGHT: ${_allProducts[i].pin?.length}',
+      );
+      if (_allProducts[i].pin?.length != 8) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _checkProduktsIdsOk() {
+    for (int i = 0; i < _allProducts.length; i++) {
+      print(
+        'I: $i ID: ${_allProducts[i].id} PIN: ${_allProducts[i].pin} LENGHT: ${_allProducts[i].pin?.length}',
+      );
+      if (_allProducts[i].id?.length != 10) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _checkProduktsTypesOk() {
+    for (int i = 0; i < _allProducts.length; i++) {
+      print(
+        'I: $i ID: ${_allProducts[i].id} PIN: ${_allProducts[i].pin} LENGHT: ${_allProducts[i].pin?.length}',
+      );
+      if (_allProducts[i].type != widget.group.pType) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /// Filters products based on search query
@@ -253,7 +294,10 @@ class _ProductsPageState extends State<ProductsPage> {
               const SizedBox(height: 20),
 
               // Action buttons
-              Row(
+
+              /*            
+if (widget.group.deletable == true)
+   Row(
                 children: [
                   Expanded(
                     child: OutlinedButton.icon(
@@ -285,7 +329,7 @@ class _ProductsPageState extends State<ProductsPage> {
                     ),
                   ),
                 ],
-              ),
+              ), */
             ],
           ),
         ),
@@ -344,17 +388,49 @@ class _ProductsPageState extends State<ProductsPage> {
                       ),
                       // TODO: text
                       Text(
-                        'Gruppe #${widget.group.groupNr ?? 'N/A'} • ${_allProducts.length} Produkte',
+                        'Gruppe #${widget.group.groupNr ?? 'N/A'} • ${_allProducts.length}/${widget.group.quantity ?? 'N/A'} Produkte',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           height: 0.0,
                           color: Theme.of(context).secondaryHeaderColor,
                         ),
                       ),
+                      // TODO: text
+                      Row(
+                        spacing: K.ps,
+                        children: [
+                          Text(
+                            'PINs: ${_areProductsPinsOk ? '✅' : '❌'}',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  height: 0.0,
+                                  color: Theme.of(context).secondaryHeaderColor,
+                                ),
+                          ),
+                          Text(
+                            'IDs: ${_areProductsIdsOk ? '✅' : '❌'}',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  height: 0.0,
+                                  color: Theme.of(context).secondaryHeaderColor,
+                                ),
+                          ),
+                          Text(
+                            'Typen: ${_areProductsTypesOk ? '✅' : '❌'}',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  height: 0.0,
+                                  color: Theme.of(context).secondaryHeaderColor,
+                                ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   actions: [
                     _buildSettingIconBtn(),
-                    _buildDeleteGroupAndProudoctsIconBtn(),
+
+                    if (widget.group.deletable == true)
+                      _buildDeleteGroupAndProudoctsIconBtn(),
                   ],
                 ),
 
@@ -498,16 +574,31 @@ class _ProductsPageState extends State<ProductsPage> {
                                 maxLines: 2,
                                 style: Theme.of(context).textTheme.titleSmall,
                               ),
-                              // TODO: nfc
-                              if (product.type != null) ...[
+
+                              _doneIconAndText(
+                                title: 'ID: ${product.id ?? 'N/A'}',
+                                isOkay: product.id?.length == 10,
+                              ),
+
+                              _doneIconAndText(
+                                title: 'PIN: ${product.pin ?? 'N/A'}',
+                                isOkay: product.pin?.length == 8,
+                              ),
+
+                              _doneIconAndText(
+                                title: 'Type: ${product.type ?? 'N/A'}',
+                                isOkay: product.type == widget.group.pType,
+                              ),
+
+                              /*                               if (product.type != null) ...[
                                 // const SizedBox(height: 4),
                                 _doneIconAndText('NFC'),
-                              ],
+                              ], */
                               // TODO: keychain
-                              if (product.type != null) ...[
+                              /*                               if (product.type != null) ...[
                                 // const SizedBox(height: 4),
                                 _doneIconAndText('Schlüsselanhänger'),
-                              ],
+                              ], */
                             ],
                           ),
                         ),
@@ -523,10 +614,13 @@ class _ProductsPageState extends State<ProductsPage> {
           );
   }
 
-  Widget _doneIconAndText(String title) {
+  Widget _doneIconAndText({required String title, required bool isOkay}) {
     return Row(
       children: [
-        Icon(I.done, color: Colors.green),
+        Icon(
+          isOkay ? I.done : I.close,
+          color: isOkay ? Colors.green : Colors.red,
+        ),
         Expanded(
           child: Text(
             title,
