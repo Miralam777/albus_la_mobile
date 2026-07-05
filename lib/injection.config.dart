@@ -96,17 +96,14 @@ Future<_i174.GetIt> initGetIt(
   gh.factory<_i1005.ShippingLabelPrinterProvider>(
     () => _i1005.ShippingLabelPrinterProvider(),
   );
+  gh.factory<_i919.AuthRemoteData>(
+    () => _i919.AuthRemoteDataImpl(gh<_i827.HttpApi>()),
+  );
   gh.lazySingleton<_i1062.SettingsCubit>(
     () => _i1062.SettingsCubit(gh<_i460.SharedPreferences>()),
   );
   gh.lazySingleton<_i270.SelectedViewIndexCubit>(
     () => _i270.SelectedViewIndexCubit(gh<_i460.SharedPreferences>()),
-  );
-  gh.factory<_i919.AuthRemoteData>(
-    () => _i919.AuthRemoteDataImpl(gh<_i827.HttpApi>()),
-  );
-  gh.factory<_i307.AddProductIdRemoteDate>(
-    () => _i307.AddProductIdRemoteDateImpl(gh<_i827.HttpApi>()),
   );
   gh.factory<_i596.AuthLocalData>(
     () => _i596.AuthLocalDataImpl(gh<_i460.SharedPreferences>()),
@@ -117,6 +114,9 @@ Future<_i174.GetIt> initGetIt(
       gh<_i466.NetworkInfo>(),
       gh<_i596.AuthLocalData>(),
     ),
+  );
+  gh.factory<_i307.AddProductIdRemoteDate>(
+    () => _i307.AddProductIdRemoteDateImpl(gh<_i827.HttpApi>()),
   );
   gh.factory<_i805.AddProductIdRepository>(
     () => _i979.AddProductIdRepositoryImpl(

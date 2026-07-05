@@ -217,6 +217,10 @@ class $AssetsUndrawsGen {
 class $AssetsIconsAppGen {
   const $AssetsIconsAppGen();
 
+  /// File path: assets/icons/app/call_wave.png
+  AssetGenImage get callWave =>
+      const AssetGenImage('assets/icons/app/call_wave.png');
+
   /// File path: assets/icons/app/launch_icon.png
   AssetGenImage get launchIcon =>
       const AssetGenImage('assets/icons/app/launch_icon.png');
@@ -243,6 +247,7 @@ class $AssetsIconsAppGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
+    callWave,
     launchIcon,
     launchIconOld,
     pdfLaunchIcon,

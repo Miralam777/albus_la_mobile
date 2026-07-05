@@ -6,6 +6,7 @@ class CarLabelPdfLocaleModel {
   final String contactSubtitle;
   final double contactSubtitleFontSize;
   final double contactSubtitleLetterSpacing;
+  final String activationCodeTitle;
 
   CarLabelPdfLocaleModel({
     required this.locale,
@@ -15,6 +16,7 @@ class CarLabelPdfLocaleModel {
     required this.contactSubtitle,
     required this.contactSubtitleFontSize,
     this.contactSubtitleLetterSpacing = 0,
+    required this.activationCodeTitle,
   });
 
   Map<String, dynamic> toJson() {
@@ -26,6 +28,7 @@ class CarLabelPdfLocaleModel {
       'contactSubtitle': contactSubtitle,
       'contactSubtitleFontSize': contactSubtitleFontSize,
       'contactSubtitleLetterSpacing': contactSubtitleLetterSpacing,
+      'activationCodeTitle': activationCodeTitle,
     };
   }
 
@@ -37,10 +40,11 @@ class CarLabelPdfLocaleModel {
       contactTitleLetterSpacing:
           (json['contactTitleLetterSpacing'] as num?)?.toDouble() ?? 0,
       contactSubtitle: json['contactSubtitle'] as String,
-      contactSubtitleFontSize:
-          (json['contactSubtitleFontSize'] as num).toDouble(),
+      contactSubtitleFontSize: (json['contactSubtitleFontSize'] as num)
+          .toDouble(),
       contactSubtitleLetterSpacing:
           (json['contactSubtitleLetterSpacing'] as num?)?.toDouble() ?? 0,
+      activationCodeTitle: json['activationCodeTitle'] as String,
     );
   }
 }

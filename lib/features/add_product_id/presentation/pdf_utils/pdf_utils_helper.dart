@@ -45,6 +45,7 @@ class PdfUtilsHelper {
     final pdf = Document(version: PdfVersion.pdf_1_5, compress: true);
 
     final font = await PdfGoogleFonts.jetBrainsMonoBold();
+    final idFont = await PdfGoogleFonts.jetBrainsMonoBold();
 
     // Load images once to avoid memory issues
     final playStoreImage = MemoryImage(
@@ -71,12 +72,38 @@ class PdfUtilsHelper {
       )).buffer.asUint8List(),
     );
 
+    final callWaveIcon = MemoryImage(
+      (await rootBundle.load(
+        Assets.icons.app.callWave.path,
+      )).buffer.asUint8List(),
+    );
+
     const format = PdfPageFormat.cm;
 
     // Labels per page (e.g. 3x3 = 9)
     const labelsPerRow = 3;
     const rowsPerPage = 3;
     const labelsPerPage = labelsPerRow * rowsPerPage;
+
+    //! de
+    /* final testCarLabelPdfLocalModel = CarLabelPdfLocaleModel(
+      locale: 'de',
+      contactTitle: 'KFZ-HALTER',
+      contactTitleFontSize: 19.0,
+      contactSubtitle: 'DIREKT KONTAKTIEREN',
+      contactSubtitleFontSize: 12.6,
+      activationCodeTitle: 'Aktivierungscode',
+    ); */
+
+    //! en
+    final testCarLabelPdfLocalModel = CarLabelPdfLocaleModel(
+      locale: 'en',
+      contactTitle: 'CONTACT THE',
+      contactTitleFontSize: 17.0,
+      contactSubtitle: 'CAR OWNER DIRECTLY',
+      contactSubtitleFontSize: 13.4,
+      activationCodeTitle: 'Activation code',
+    );
 
     // TODO: move it in car label pdf utils
     //! add first page
@@ -99,21 +126,18 @@ class PdfUtilsHelper {
         backgroundImage: backgroundImage,
       ), */
       // ! car label
-      child: _carLabelV3(
-        // index: index,
-        carLabelPdfLocale: CarLabelPdfLocaleModel(
-          locale: 'de',
-          contactTitle: 'KFZ-HALTER',
-          contactTitleFontSize: 16.2,
-          contactSubtitle: 'KONTAKTIEREN',
-          contactSubtitleFontSize: 13.5,
-        ),
+      child: _carLabelV4(
+        index: null,
+        carLabelPdfLocale: testCarLabelPdfLocalModel,
         font: font,
+        idFont: idFont,
         format: format,
         qrId: 'testQrId77',
+        pin: '12345678',
         launchIcon: launchIcon,
         appStoreImage: appStoreImage,
         playStoreImage: playStoreImage,
+        callWaveIcon: callWaveIcon,
       ),
     );
 
@@ -204,25 +228,20 @@ class PdfUtilsHelper {
                     child: GridView(
                       crossAxisCount: 3,
                       childAspectRatio: 1.37,
+                      // childAspectRatio: 1.9,
                       children: List.generate(pageProducts.length, (i) {
-                        return _carLabelV3(
+                        return _carLabelV4(
                           index: i,
-                          carLabelPdfLocale: CarLabelPdfLocaleModel(
-                            locale: 'de',
-                            contactTitle: 'KFZ-HALTER',
-                            // contactTitleFontSize: 16.2,
-                            contactTitleFontSize: 20.0,
-                            contactSubtitle: 'KONTAKTIEREN',
-                            // contactSubtitleFontSize: 13.5,
-                            contactSubtitleFontSize: 16.6,
-                          ),
+                          carLabelPdfLocale: testCarLabelPdfLocalModel,
                           font: font,
+                          idFont: idFont,
                           format: format,
-                          // qrId: product.id,
                           qrId: pageProducts[i].id,
+                          pin: '12345678',
                           launchIcon: launchIcon,
                           appStoreImage: appStoreImage,
                           playStoreImage: playStoreImage,
+                          callWaveIcon: callWaveIcon,
                         );
                         /*                         return _carLabel(
                           // index: globalStartIndex + i,
@@ -254,6 +273,182 @@ class PdfUtilsHelper {
     }
 
     return pdf.save();
+  }
+
+  static Container _carLabelV4({
+    int? index,
+    required CarLabelPdfLocaleModel carLabelPdfLocale,
+    required Font font,
+    required Font idFont,
+    required double format,
+    required String pin,
+    required String? qrId,
+    required MemoryImage launchIcon,
+    required MemoryImage appStoreImage,
+    required MemoryImage playStoreImage,
+    required MemoryImage callWaveIcon,
+  }) {
+    final paddging = 0.3 * format;
+
+    return Container(
+      margin: EdgeInsets.all(5.0),
+      padding: index == null
+          ? EdgeInsets.symmetric(vertical: 5.0, horizontal: 7.0)
+          : EdgeInsets.zero,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(K.rm),
+        border: Border.all(color: PdfColors.grey600),
+      ),
+
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: .center,
+        children: [
+          //! Ativation code
+          Container(
+            width: 6.0 * format,
+            padding: EdgeInsets.only(bottom: 4.0),
+            alignment: Alignment.center,
+            child: Text(
+              '${carLabelPdfLocale.activationCodeTitle}: $pin',
+              style: TextStyle(
+                height: 0.0,
+                letterSpacing: 0.0,
+                font: font,
+                fontWeight: FontWeight.bold,
+                fontSize: 9.0,
+              ),
+            ),
+          ),
+
+          SizedBox(height: 5.0),
+
+          //! label gradient container
+          Container(
+            width: 6.0 * format,
+            alignment: Alignment.topCenter,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(K.rl + 1.7),
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  PdfColor.fromInt(0xFF00274F),
+                  PdfColor.fromInt(0xFF0D4280),
+                ],
+              ),
+            ),
+            child: Container(
+              margin: EdgeInsets.all(2.0),
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(K.rl),
+                border: Border.all(color: PdfColors.white, width: 1.7),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: paddging * 1.5),
+
+                  Row(
+                    mainAxisAlignment: .center,
+                    crossAxisAlignment: .end,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          carLabelPdfLocale.contactTitle,
+                          style: TextStyle(
+                            height: 0.0,
+                            letterSpacing: 0.0,
+                            color: PdfColors.white,
+                            font: font,
+                            fontWeight: FontWeight.bold,
+                            fontSize: carLabelPdfLocale.contactTitleFontSize,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 5.0),
+                      Container(
+                        height: 27.0,
+                        width: 27.0,
+                        decoration: BoxDecoration(
+                          color: PdfColors.green800,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: PdfColors.white,
+                            width: 0.7,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(3.0),
+                          child: Image(callWaveIcon),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  //! ************** contact texts container
+                  Text(
+                    carLabelPdfLocale.contactSubtitle,
+                    style: TextStyle(
+                      height: 0.0,
+                      letterSpacing: 0.0,
+                      color: PdfColors.white,
+                      font: font,
+                      fontWeight: FontWeight.bold,
+                      fontSize: carLabelPdfLocale.contactSubtitleFontSize,
+                    ),
+                  ),
+
+                  //! ************** id and  qrcode container
+                  SizedBox(height: paddging * 0.5),
+                  Text(
+                    'ID: $qrId',
+                    style: TextStyle(
+                      fontSize: 8.0,
+                      font: idFont,
+                      color: PdfColors.white,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  SizedBox(height: paddging * 0.5),
+
+                  Container(
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      color: PdfColors.white,
+                      borderRadius: BorderRadius.circular(K.rm),
+                    ),
+                    child: BarcodeWidget(
+                      height: 2.5 * format,
+                      width: 2.5 * format,
+                      padding: EdgeInsets.zero,
+                      data: '${K.lookAppMsgBaseUrl}$qrId',
+                      barcode: Barcode.qrCode(),
+                    ),
+                  ),
+
+                  //! ************** look app logo and name and appstors icons
+                  SizedBox(height: paddging * 0.7),
+                  Image(launchIcon, width: 1.2 * format),
+                  Text(
+                    'LookApp',
+                    style: TextStyle(
+                      fontSize: 13.0,
+                      fontWeight: FontWeight.bold,
+                      color: PdfColors.white,
+                      letterSpacing: 0,
+                    ),
+                  ),
+
+                  SizedBox(height: paddging * 1.1),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   static Column _carLabelV3({

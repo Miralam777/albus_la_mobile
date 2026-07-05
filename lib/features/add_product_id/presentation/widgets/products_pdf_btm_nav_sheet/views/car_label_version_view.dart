@@ -51,6 +51,13 @@ class CarLabelVersionView extends StatelessWidget {
               onTap: () async =>
                   await _onCreatePdf(context, CarLabelPdfType.list),
             ),
+            ProuductsPdfListTile(
+              icon: I.viewList,
+              // TODO: text
+              title: 'Erste Seite',
+              onTap: () async =>
+                  await _onCreatePdf(context, CarLabelPdfType.firstPage),
+            ),
           ],
         ),
       ),
@@ -82,8 +89,10 @@ class CarLabelVersionView extends StatelessWidget {
         );
       } else if (pdfType == CarLabelPdfType.list) {
         progressNotifier.value = 'Generiert...';
-
         pdfFile = await CarLabelPdfUtils.genListPdf();
+      } else if (pdfType == CarLabelPdfType.firstPage) {
+        progressNotifier.value = 'Generiert...';
+        pdfFile = await CarLabelPdfUtils.genFirsPagePdf();
       }
 
       if (!context.mounted) return;
