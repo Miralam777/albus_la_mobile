@@ -270,7 +270,7 @@ class KeychainPdfUtils {
   static Future<File> genListPdf() async {
     final locale = ProductsPdfBtmSheetRoutes.locale;
     final genProducts = ProductsPdfBtmSheetRoutes.genProducts;
-
+    final group = ProductsPdfBtmSheetRoutes.group;
     final localeModel = AppLocaleServices.getLocaleByLangCode(locale);
 
     // Load images once
@@ -293,6 +293,7 @@ class KeychainPdfUtils {
       pdf,
       productType: 'Schlüsselanhänger',
       fileName: 'keychain_lists_',
+      groupNr: group?.groupNr,
       genProducts: genProducts,
       version: localeModel.languageModel.de,
       launchIconBytes: launchIconBytes,

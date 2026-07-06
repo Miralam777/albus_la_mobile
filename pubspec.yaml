@@ -32,6 +32,7 @@ dependencies:
   barcode: ^2.2.9
   carousel_slider: ^5.1.2
   cloud_firestore: ^6.4.1
+  csv: ^6.0.0
   cupertino_icons: ^1.0.9
   dartz: ^0.10.1
   email_validator: ^3.0.0

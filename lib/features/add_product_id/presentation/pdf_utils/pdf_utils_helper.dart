@@ -1259,6 +1259,7 @@ class PdfUtilsHelper {
     Document pdf, {
     required String productType,
     required String fileName,
+    required int? groupNr,
     required List<GenProduct> genProducts,
     required String version,
     required Uint8List launchIconBytes,
@@ -1269,7 +1270,6 @@ class PdfUtilsHelper {
       pdf,
       productType: productType,
       version: version,
-      // groupNr: ,
       producktLenght: '${genProducts.length}',
       launchIcon: MemoryImage(launchIconBytes),
       child: child,
@@ -1327,6 +1327,7 @@ class PdfUtilsHelper {
     final finalFile = await PdfUtilsHelper.moveToDownloads(
       File(outputPath),
       fileName,
+      subfolder: 'lookApp/${groupNr ?? 'unknown'}',
     );
 
     final fileSize = await finalFile.length();
@@ -1338,7 +1339,12 @@ class PdfUtilsHelper {
 
   //! ******************* helpers
   /// Move file to Downloads directory
-  static Future<File> moveToDownloads(File sourceFile, String fileName) async {
+  static Future<File> moveToDownloads(
+    File sourceFile,
+    String fileName, {
+    String? subfolder,
+    String extension = 'pdf',
+  }) async {
     final String downloadsPath;
 
     if (Platform.isAndroid) {
@@ -1351,9 +1357,14 @@ class PdfUtilsHelper {
       downloadsPath = downloadsDir?.path ?? '.';
     }
 
+    final targetDir = subfolder == null
+        ? downloadsPath
+        : '$downloadsPath/$subfolder';
+    await Directory(targetDir).create(recursive: true);
+
     final dateforFileName = Helpers.formatDateForFileName();
-    final name = '$fileName$dateforFileName.pdf';
-    final destPath = '$downloadsPath/$name';
+    final name = '$fileName$dateforFileName.$extension';
+    final destPath = '$targetDir/$name';
 
     // Copy and delete original
     final destFile = await sourceFile.copy(destPath);

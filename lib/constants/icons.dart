@@ -495,4 +495,8 @@ class I {
   static final IconData creditcard = _isIOS
       ? CupertinoIcons.creditcard
       : Icons.credit_card_rounded;
+
+  static final IconData csv = _isIOS
+      ? CupertinoIcons.doc_append
+      : Icons.file_present;
 }

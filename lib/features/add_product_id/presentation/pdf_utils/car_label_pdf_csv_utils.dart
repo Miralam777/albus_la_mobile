@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:csv/csv.dart';
 import 'package:albus_la_mobile/features/add_product_id/presentation/pdf_utils/pdf_utils_helper.dart';
 import 'package:albus_la_mobile/features/home/presentation/providers/models/gen_qrcode/gen_product.dart';
 import 'package:flutter/foundation.dart';
@@ -16,9 +17,9 @@ import 'package:pdf_combiner/models/merge_input.dart';
 import 'package:pdf_combiner/pdf_combiner.dart';
 import 'package:printing/printing.dart';
 
-enum CarLabelPdfType { orginal, list, firstPage }
+enum CarLabelPdfCsvType { orginal, list, firstPage, csv }
 
-class CarLabelPdfUtils {
+class CarLabelPdfCsvUtils {
   //! ******************* gen car label pdf
   /// Generate large PDF without memory issues
   static Future<File> genLabelPdf({
@@ -143,11 +144,54 @@ class CarLabelPdfUtils {
     final finalFile = await PdfUtilsHelper.moveToDownloads(
       File(outputPath),
       'car_labels_',
+      subfolder: 'lookApp/${groupNr ?? 'unknown'}',
     );
 
     final fileSize = await finalFile.length();
     print('Final PDF: ${finalFile.path}');
     print('Size: ${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB');
+
+    return finalFile;
+  }
+
+  //! ******************* gen csv
+  /// Generate CSV with index, activationCode, id, qrcode, title and secondaryTitle for all products
+  static Future<File> genCsv() async {
+    final locale = ProductsPdfBtmSheetRoutes.locale;
+    final groupNr = ProductsPdfBtmSheetRoutes.group?.groupNr != null
+        ? (ProductsPdfBtmSheetRoutes.group?.groupNr).toString()
+        : null;
+    final genProducts = ProductsPdfBtmSheetRoutes.genProducts;
+    final carLabelPdfLocale = AppLocaleServices.getLocaleByLangCode(
+      locale,
+    ).pdfLocaleModel.carLabel;
+
+    final rows = [
+      ['Index', 'Activation Code', 'ID', 'QR Code', 'Title', 'Secondary Title'],
+      for (final product in genProducts)
+        [
+          product.index,
+          product.pin,
+          product.id,
+          '${K.lookAppMsgBaseUrl}${product.id}',
+          carLabelPdfLocale.contactTitle,
+          carLabelPdfLocale.contactSubtitle,
+        ],
+    ];
+    final csvData =
+        '${const ListToCsvConverter(fieldDelimiter: ';', eol: '\n').convert(rows)}\n';
+
+    final tempDir = await getTemporaryDirectory();
+    final tempPath =
+        '${tempDir.path}/car_labels_${DateTime.now().millisecondsSinceEpoch}.csv';
+    final tempFile = await File(tempPath).writeAsString(csvData);
+
+    final finalFile = await PdfUtilsHelper.moveToDownloads(
+      tempFile,
+      'car_labels_',
+      subfolder: 'lookApp/${groupNr ?? 'unknown'}',
+      extension: 'csv',
+    );
 
     return finalFile;
   }
@@ -292,6 +336,7 @@ class CarLabelPdfUtils {
   static Future<File> genListPdf() async {
     final locale = ProductsPdfBtmSheetRoutes.locale;
     final genProducts = ProductsPdfBtmSheetRoutes.genProducts;
+    final group = ProductsPdfBtmSheetRoutes.group;
     final localeModel = AppLocaleServices.getLocaleByLangCode(locale);
 
     // Load images once
@@ -318,6 +363,7 @@ class CarLabelPdfUtils {
       pdf,
       productType: 'Autolabel',
       fileName: 'car_labels_list_',
+      groupNr: group?.groupNr,
       genProducts: genProducts,
       version: localeModel.languageModel.de,
       launchIconBytes: launchIconBytes,
@@ -402,6 +448,7 @@ class CarLabelPdfUtils {
     final finalFile = await PdfUtilsHelper.moveToDownloads(
       File(outputPath),
       fileName,
+      subfolder: 'lookApp/${group?.groupNr ?? 'unknown'}',
     );
 
     final fileSize = await finalFile.length();
