@@ -75,6 +75,11 @@ class AppLocaleServices {
           contactSubtitle: 'DIREKT KONTAKTIEREN',
           contactSubtitleFontSize: 12.6,
           activationCodeTitle: 'Aktivierungscode',
+          contactTitleV2: 'FAHRER',
+          contactTitleFontSizeV2: 30.0,
+          contactTitleLetterSpacingV2: 1.0,
+          contactSubtitleV2: 'DIREKT KONTAKTIEREN',
+          contactSubtitleFontSizeV2: 20.25,
         ),
         // TODO:
         keychain: KeychainPdfLocaleModel(
@@ -113,19 +118,16 @@ class AppLocaleServices {
       // TODO:
       pdfLocaleModel: PdfLocaleModel(
         carLabel: CarLabelPdfLocaleModel(
-          /* locale: 'en',
-          contactTitle: 'CONTACT',
-          contactTitleFontSize: 15,
-          contactSubtitle: 'OWNER',
-          contactSubtitleFontSize: 17.0,
-          contactSubtitleLetterSpacing: 2.5,
-          activationCodeTitle: 'Activation code', */
           locale: 'en',
           contactTitle: 'CONTACT THE',
           contactTitleFontSize: 17.0,
           contactSubtitle: 'CAR OWNER DIRECTLY',
           contactSubtitleFontSize: 13.4,
           activationCodeTitle: 'Activation code',
+          contactTitleV2: 'DRIVER',
+          contactTitleFontSizeV2: 19.0,
+          contactSubtitleV2: 'CAR OWNER DIRECTLY',
+          contactSubtitleFontSizeV2: 25.0,
         ),
         // TODO:
         keychain: KeychainPdfLocaleModel(
@@ -171,6 +173,10 @@ class AppLocaleServices {
           contactSubtitleFontSize: 17.0,
           contactSubtitleLetterSpacing: 2.5, // TODO:
           activationCodeTitle: '',
+          contactTitleV2: '',
+          contactTitleFontSizeV2: 19.0,
+          contactSubtitleV2: 'CAR OWNER DIRECTLY',
+          contactSubtitleFontSizeV2: 25.0,
         ),
         // TODO:
         keychain: KeychainPdfLocaleModel(
@@ -217,6 +223,10 @@ class AppLocaleServices {
           contactSubtitleLetterSpacing: 2.5,
           // TODO:
           activationCodeTitle: '',
+          contactTitleV2: '',
+          contactTitleFontSizeV2: 19.0,
+          contactSubtitleV2: 'CAR OWNER DIRECTLY',
+          contactSubtitleFontSizeV2: 25.0,
         ),
         // TODO:
         keychain: KeychainPdfLocaleModel(
@@ -262,6 +272,10 @@ class AppLocaleServices {
           contactSubtitleLetterSpacing: 2.5,
           // TODO:
           activationCodeTitle: '',
+          contactTitleV2: '',
+          contactTitleFontSizeV2: 19.0,
+          contactSubtitleV2: 'CAR OWNER DIRECTLY',
+          contactSubtitleFontSizeV2: 25.0,
         ),
         // TODO:
         keychain: KeychainPdfLocaleModel(
@@ -307,6 +321,10 @@ class AppLocaleServices {
           contactSubtitleLetterSpacing: 2.5,
           // TODO:
           activationCodeTitle: '',
+          contactTitleV2: '',
+          contactTitleFontSizeV2: 19.0,
+          contactSubtitleV2: 'CAR OWNER DIRECTLY',
+          contactSubtitleFontSizeV2: 25.0,
         ),
         // TODO:
         keychain: KeychainPdfLocaleModel(
@@ -353,6 +371,10 @@ class AppLocaleServices {
           contactSubtitleLetterSpacing: 2.5,
           // TODO:
           activationCodeTitle: '',
+          contactTitleV2: '',
+          contactTitleFontSizeV2: 19.0,
+          contactSubtitleV2: 'CAR OWNER DIRECTLY',
+          contactSubtitleFontSizeV2: 25.0,
         ),
         // TODO:
         keychain: KeychainPdfLocaleModel(
@@ -399,6 +421,10 @@ class AppLocaleServices {
           contactSubtitleLetterSpacing: 2.5,
           // TODO:
           activationCodeTitle: '',
+          contactTitleV2: '',
+          contactTitleFontSizeV2: 19.0,
+          contactSubtitleV2: 'CAR OWNER DIRECTLY',
+          contactSubtitleFontSizeV2: 25.0,
         ),
         // TODO:
         keychain: KeychainPdfLocaleModel(

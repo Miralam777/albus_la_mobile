@@ -4,10 +4,13 @@ import 'package:albus_la_mobile/configs/routes/routes.dart';
 import 'package:albus_la_mobile/constants/consts.dart';
 import 'package:albus_la_mobile/constants/icons.dart';
 import 'package:albus_la_mobile/core/utils/helpers/media_helper.dart';
+import 'package:albus_la_mobile/core/utils/utility/dialogs_utils.dart';
 import 'package:albus_la_mobile/core/widgets/primary_app_bar.dart';
 import 'package:albus_la_mobile/features/add_product_id/presentation/pdf_utils/car_label_pdf_csv_utils.dart';
 import 'package:albus_la_mobile/features/add_product_id/presentation/widgets/products_pdf_btm_nav_sheet/widgets/creating_dialog.dart';
+import 'package:albus_la_mobile/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:open_filex/open_filex.dart';
 
@@ -37,12 +40,34 @@ class CarLabelVersionView extends StatelessWidget {
             const PdfTypeIconLocaleWidget(withLocale: true),
 
             ProuductsPdfListTile(
-              icon: I.car,
+              leading: Image.asset(
+                width: 25.0.r,
+                Assets.productImages.carLabelV1.path,
+                errorBuilder: (_, _, _) => SizedBox.shrink(),
+              ),
               // TODO: text
-              title: 'Autoaufkleber',
+              title: 'Autoaufkleber V1',
+              // TODO: text
+              subtitle: 'KFZ-HALTER DIREKT KONTAKTIEREN',
               onTap: () async =>
-                  await _onCreatePdf(context, CarLabelPdfCsvType.orginal),
+                  await _onCreatePdf(context, CarLabelPdfCsvType.v1),
             ),
+
+            ProuductsPdfListTile(
+              // TODO: iamge
+              leading: Image.asset(
+                width: 25.0.r,
+                Assets.productImages.carLabelV1.path,
+                errorBuilder: (_, _, _) => SizedBox.shrink(),
+              ),
+              // TODO: text
+              title: 'Autoaufkleber V2',
+              // TODO: text
+              subtitle: 'FAHRER DIREKT KONTAKTIEREN',
+              onTap: () async =>
+                  await _onCreatePdf(context, CarLabelPdfCsvType.v2),
+            ),
+
             // TODO:
             ProuductsPdfListTile(
               icon: I.viewList,
@@ -51,6 +76,7 @@ class CarLabelVersionView extends StatelessWidget {
               onTap: () async =>
                   await _onCreatePdf(context, CarLabelPdfCsvType.list),
             ),
+
             ProuductsPdfListTile(
               icon: I.description,
               // TODO: text
@@ -58,6 +84,7 @@ class CarLabelVersionView extends StatelessWidget {
               onTap: () async =>
                   await _onCreatePdf(context, CarLabelPdfCsvType.firstPage),
             ),
+
             ProuductsPdfListTile(
               icon: I.csv,
               // TODO: text
@@ -75,10 +102,17 @@ class CarLabelVersionView extends StatelessWidget {
     BuildContext context,
     CarLabelPdfCsvType pdfType,
   ) async {
-    // TODO: remove
+    // TODO: remove only for test build
     // context.push(Routes.printPdfPage);
     // return;
     // TODO: orginal
+
+    String? firstPageVersion; // v1, v2
+    if (pdfType == CarLabelPdfCsvType.firstPage) {
+      firstPageVersion = await showVersionSelectDialog(context);
+      if (firstPageVersion == null) return;
+      if (!context.mounted) return;
+    }
 
     final progressNotifier = ValueNotifier<String>('Starting...');
 
@@ -88,8 +122,14 @@ class CarLabelVersionView extends StatelessWidget {
     try {
       File? pdfFile;
 
-      if (pdfType == CarLabelPdfCsvType.orginal) {
-        pdfFile = await CarLabelPdfCsvUtils.genLabelPdf(
+      if (pdfType == CarLabelPdfCsvType.v1) {
+        pdfFile = await CarLabelPdfCsvUtils.genLabelPdfV1(
+          onProgress: (status, current, total) {
+            progressNotifier.value = '$status: $current / $total';
+          },
+        );
+      } else if (pdfType == CarLabelPdfCsvType.v2) {
+        pdfFile = await CarLabelPdfCsvUtils.genLabelPdfV2(
           onProgress: (status, current, total) {
             progressNotifier.value = '$status: $current / $total';
           },
@@ -99,7 +139,7 @@ class CarLabelVersionView extends StatelessWidget {
         pdfFile = await CarLabelPdfCsvUtils.genListPdf();
       } else if (pdfType == CarLabelPdfCsvType.firstPage) {
         progressNotifier.value = 'First page generiert...';
-        pdfFile = await CarLabelPdfCsvUtils.genFirsPagePdf();
+        pdfFile = await CarLabelPdfCsvUtils.genFirsPagePdf(firstPageVersion!);
       } else if (pdfType == CarLabelPdfCsvType.csv) {
         progressNotifier.value = 'CSV generiert...';
         pdfFile = await CarLabelPdfCsvUtils.genCsv();
@@ -122,5 +162,32 @@ class CarLabelVersionView extends StatelessWidget {
     } finally {
       progressNotifier.dispose();
     }
+  }
+
+  //! version select dialog
+  Future<String?> showVersionSelectDialog(BuildContext context) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(K.rl),
+          ),
+          // TODO: text
+          title: const Text('Version wählen', textAlign: TextAlign.center),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => context.pop('v1'),
+              child: const Text('V1'),
+            ),
+            TextButton(
+              onPressed: () => context.pop('v2'),
+              child: const Text('V2'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

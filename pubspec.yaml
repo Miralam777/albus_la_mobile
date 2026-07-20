@@ -104,6 +104,7 @@ flutter:
     - .env
     - assets/icons/app/
     - assets/images/
+    - assets/product_images/
     - assets/sounds/
     - assets/images/welcoming_page/
     - assets/undraws/

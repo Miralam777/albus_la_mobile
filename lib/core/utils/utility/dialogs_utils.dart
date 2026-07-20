@@ -154,7 +154,7 @@ class DialogsUtils {
   }
 
   //! cupertino modal pop up
-  static void cupertinoModalPopup(
+  static Future<void> cupertinoModalPopup(
     BuildContext context, {
     required String title,
     required String message,
@@ -165,9 +165,9 @@ class DialogsUtils {
     required Function() yesFcn,
     required Function() noFcn,
     required Function() cancelFcn,
-  }) {
+  }) async {
     // TODO: for android
-    showCupertinoModalPopup<void>(
+    await showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => _CupertinoActionSheetWidget(
         title: title,

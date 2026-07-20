@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:albus_la_mobile/constants/app_locales/models/pdf/card_pdf_locale_model.dart';
 import 'package:albus_la_mobile/constants/app_locales/models/pdf/keychain_pdf_locale_model.dart';
 import 'package:albus_la_mobile/core/utils/helpers/helpers.dart';
+import 'package:albus_la_mobile/features/add_product_id/presentation/pdf_utils/car_label_pdf_csv_utils.dart';
 import 'package:albus_la_mobile/features/add_product_id/presentation/pdf_utils/models/product_pdf_type_enum.dart';
 import 'package:albus_la_mobile/constants/app_locales/app_locale_services.dart';
 import 'package:albus_la_mobile/constants/app_locales/models/pdf/car_label_pdf_locale_model.dart';
@@ -80,30 +81,49 @@ class PdfUtilsHelper {
 
     const format = PdfPageFormat.cm;
 
+    print('format: $format cm');
+
     // Labels per page (e.g. 3x3 = 9)
-    const labelsPerRow = 3;
+    /* const labelsPerRow = 3;
     const rowsPerPage = 3;
+    const labelsPerPage = labelsPerRow * rowsPerPage; */
+
+    // Labels per page (e.g. 3x3 = 9)
+    const labelsPerRow = 2;
+    const rowsPerPage = 2;
     const labelsPerPage = labelsPerRow * rowsPerPage;
 
+    final testCarLabelPdfVerion = CarLabelPdfCsvType.v2;
+    print('=============testCarLabelPdfVerion: $testCarLabelPdfVerion');
+
+    print('=========> PdfColors.green800');
+    print(PdfColors.green800);
     //! de
-    /* final testCarLabelPdfLocalModel = CarLabelPdfLocaleModel(
+    final testCarLabelPdfLocalModel = CarLabelPdfLocaleModel(
       locale: 'de',
       contactTitle: 'KFZ-HALTER',
       contactTitleFontSize: 19.0,
       contactSubtitle: 'DIREKT KONTAKTIEREN',
       contactSubtitleFontSize: 12.6,
       activationCodeTitle: 'Aktivierungscode',
-    ); */
+      contactTitleV2: 'FAHRER',
+      contactTitleFontSizeV2: 30.0,
+      contactTitleLetterSpacingV2: 1.0,
+      contactSubtitleV2: 'DIREKT KONTAKTIEREN',
+      contactSubtitleFontSizeV2: 20.25,
+    );
 
     //! en
-    final testCarLabelPdfLocalModel = CarLabelPdfLocaleModel(
+    /*     final testCarLabelPdfLocalModel = CarLabelPdfLocaleModel(
       locale: 'en',
       contactTitle: 'CONTACT THE',
       contactTitleFontSize: 17.0,
       contactSubtitle: 'CAR OWNER DIRECTLY',
       contactSubtitleFontSize: 13.4,
       activationCodeTitle: 'Activation code',
-    );
+      contactTitleV2: 'DRIVER',
+      contactTitleFontSizeV2: 19.0,
+    ); */
 
     // TODO: move it in car label pdf utils
     //! add first page
@@ -126,19 +146,33 @@ class PdfUtilsHelper {
         backgroundImage: backgroundImage,
       ), */
       // ! car label
-      child: _carLabelV4(
-        index: null,
-        carLabelPdfLocale: testCarLabelPdfLocalModel,
-        font: font,
-        idFont: idFont,
-        format: format,
-        qrId: 'testQrId77',
-        pin: '12345678',
-        launchIcon: launchIcon,
-        appStoreImage: appStoreImage,
-        playStoreImage: playStoreImage,
-        callWaveIcon: callWaveIcon,
-      ),
+      child: testCarLabelPdfVerion == CarLabelPdfCsvType.v1
+          ? _carLabelV1(
+              index: null,
+              carLabelPdfLocale: testCarLabelPdfLocalModel,
+              font: font,
+              idFont: idFont,
+              format: format,
+              qrId: 'testQrId77',
+              pin: '12345678',
+              launchIcon: launchIcon,
+              appStoreImage: appStoreImage,
+              playStoreImage: playStoreImage,
+              callWaveIcon: callWaveIcon,
+            )
+          : _carLabelV2(
+              index: null,
+              carLabelPdfLocale: testCarLabelPdfLocalModel,
+              font: font,
+              idFont: idFont,
+              format: format,
+              qrId: 'testQrId77',
+              pin: '12345678',
+              launchIcon: launchIcon,
+              appStoreImage: appStoreImage,
+              playStoreImage: playStoreImage,
+              callWaveIcon: callWaveIcon,
+            ),
     );
 
     // Split into pages to prevent memory overflow
@@ -214,7 +248,7 @@ class PdfUtilsHelper {
       ); */
 
       // ! car labe page
-      pdf.addPage(
+      /*       pdf.addPage(
         Page(
           pageFormat: PdfPageFormat.a4,
           margin: EdgeInsets.zero,
@@ -230,19 +264,33 @@ class PdfUtilsHelper {
                       childAspectRatio: 1.37,
                       // childAspectRatio: 1.9,
                       children: List.generate(pageProducts.length, (i) {
-                        return _carLabelV4(
-                          index: i,
-                          carLabelPdfLocale: testCarLabelPdfLocalModel,
-                          font: font,
-                          idFont: idFont,
-                          format: format,
-                          qrId: pageProducts[i].id,
-                          pin: '12345678',
-                          launchIcon: launchIcon,
-                          appStoreImage: appStoreImage,
-                          playStoreImage: playStoreImage,
-                          callWaveIcon: callWaveIcon,
-                        );
+                        return testCarLabelPdfVerion == CarLabelPdfCsvType.v1
+                            ? _carLabelV1(
+                                index: i,
+                                carLabelPdfLocale: testCarLabelPdfLocalModel,
+                                font: font,
+                                idFont: idFont,
+                                format: format,
+                                qrId: pageProducts[i].id,
+                                pin: '12345678',
+                                launchIcon: launchIcon,
+                                appStoreImage: appStoreImage,
+                                playStoreImage: playStoreImage,
+                                callWaveIcon: callWaveIcon,
+                              )
+                            : _carLabelV2(
+                                index: i,
+                                carLabelPdfLocale: testCarLabelPdfLocalModel,
+                                font: font,
+                                idFont: idFont,
+                                format: format,
+                                qrId: pageProducts[i].id,
+                                pin: '12345678',
+                                launchIcon: launchIcon,
+                                appStoreImage: appStoreImage,
+                                playStoreImage: playStoreImage,
+                                callWaveIcon: callWaveIcon,
+                              );
                         /*                         return _carLabel(
                           // index: globalStartIndex + i,
                           index: pageProducts[i].index,
@@ -269,19 +317,67 @@ class PdfUtilsHelper {
             );
           },
         ),
+      ); */
+      // ! car labe page Fahrer
+      pdf.addPage(
+        Page(
+          pageFormat: PdfPageFormat.a4,
+          margin: EdgeInsets.zero,
+          build: (context) {
+            return Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: GridView(
+                      crossAxisCount: 2,
+                      // childAspectRatio: ,
+                      // childAspectRatio: 1.37,
+                      // childAspectRatio: 4 / 3,
+                      // childAspectRatio: 1.9,
+                      children: List.generate(pageProducts.length, (i) {
+                        return _carLabelV2(
+                          index: i,
+                          carLabelPdfLocale: testCarLabelPdfLocalModel,
+                          font: font,
+                          idFont: idFont,
+                          format: format,
+                          qrId: pageProducts[i].id,
+                          pin: pageProducts[i].pin,
+                          launchIcon: launchIcon,
+                          appStoreImage: appStoreImage,
+                          playStoreImage: playStoreImage,
+                          callWaveIcon: callWaveIcon,
+                        );
+                      }),
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 5,
+                    horizontal: 20,
+                  ),
+                  child: PdfUtilsHelper.footerRow('1 / 1'),
+                ),
+              ],
+            );
+          },
+        ),
       );
     }
 
     return pdf.save();
   }
 
-  static Container _carLabelV4({
+  static Container _carLabelV1({
     int? index,
     required CarLabelPdfLocaleModel carLabelPdfLocale,
     required Font font,
     required Font idFont,
     required double format,
-    required String pin,
+    required String? pin,
     required String? qrId,
     required MemoryImage launchIcon,
     required MemoryImage appStoreImage,
@@ -304,7 +400,7 @@ class PdfUtilsHelper {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: .center,
         children: [
-          //! Ativation code
+          //! Ativation code text
           Container(
             width: 6.0 * format,
             padding: EdgeInsets.only(bottom: 4.0),
@@ -451,451 +547,187 @@ class PdfUtilsHelper {
     );
   }
 
-  static Column _carLabelV3({
+  static Container _carLabelV2({
     int? index,
     required CarLabelPdfLocaleModel carLabelPdfLocale,
     required Font font,
+    required Font idFont,
     required double format,
+    required String? pin,
     required String? qrId,
     required MemoryImage launchIcon,
     required MemoryImage appStoreImage,
     required MemoryImage playStoreImage,
+    required MemoryImage callWaveIcon,
   }) {
     final paddging = 0.3 * format;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // index != null ? ...[] : ...[],
-        if (index != null) SizedBox(height: 10),
-        if (index != null)
-          Text(
-            '$index',
-            style: TextStyle(
-              fontSize: 15.0,
-              font: font,
-              color: PdfColors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        SizedBox(height: 2),
-        Container(
-          height: 8.2 * format,
-          // width: 5.5 * format,
-          width: 6.0 * format,
-          alignment: Alignment.topCenter,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(K.rl),
-            /*             gradient: const LinearGradient(
-              begin: Alignment.bottomRight,
-              end: Alignment.topLeft,
-              stops: [0.5, 0.7, 0.9],
-              colors: [
-                PdfColor.fromInt(0xFF013069),
-                PdfColor.fromInt(0xFF0e4c96),
-                PdfColor.fromInt(0xFF1161bf),
-              ],
-            ), */
-            gradient: const LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              stops: [0.4, 0.6, 0.9],
-              colors: [
-                PdfColor.fromInt(0xFF013069),
-                PdfColor.fromInt(0xFF0e4c96),
-                // PdfColor.fromInt(0xFF1161bf),
-                // PdfColor.fromInt(0xFF4097FF),
-                PdfColor.fromInt(0xFF3686E3),
-              ],
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              //! ************** look app logo and name and appstors icons
-              // SizedBox(height: paddging * 0.5),
-              SizedBox(height: 0.15 * format),
-              // Image(launchIcon, width: 1.5 * format),
-              // Image(launchIcon, width: 1.6 * format),
-              Image(launchIcon, height: 1.7 * format),
-              Text(
-                'LookApp',
-                style: TextStyle(
-                  // fontSize: 18.5,
-                  fontSize: 19.0,
-                  fontWeight: FontWeight.bold,
-                  color: PdfColors.white,
-                  letterSpacing: 0,
-                ),
-              ),
 
-              //! ************** qrcode container
-              // SizedBox(height: paddging * 0.5),
-              // SizedBox(height: 0.3 * format),
-              SizedBox(height: 0.15 * format),
-              Container(
-                // padding: const EdgeInsets.all(8.0),
-                padding: EdgeInsets.all(0.3 * format),
-                decoration: BoxDecoration(
-                  color: PdfColors.white,
-                  borderRadius: BorderRadius.circular(K.rm),
-                ),
-                child: BarcodeWidget(
-                  height: 2.5 * format,
-                  width: 2.5 * format,
-                  padding: EdgeInsets.zero,
-                  data: '${K.lookAppMsgBaseUrl}$qrId',
-                  barcode: Barcode.qrCode(),
-                ),
+    return Container(
+      width: 10.0 * format,
+      margin: EdgeInsets.all(5.0),
+      padding: index == null
+          ? EdgeInsets.symmetric(vertical: 5.0 + 2.5, horizontal: 5.0)
+          : EdgeInsets.zero,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(K.rm),
+        border: Border.all(color: PdfColors.grey600),
+      ),
+
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: .center,
+        children: [
+          //! Ativation code text
+          Container(
+            // width: 9.5 * format,
+            padding: EdgeInsets.only(bottom: 4.0),
+            alignment: Alignment.center,
+            child: Text(
+              '${carLabelPdfLocale.activationCodeTitle}: $pin',
+              style: TextStyle(
+                height: 0.0,
+                letterSpacing: 0.0,
+                font: font,
+                fontWeight: FontWeight.bold,
+                fontSize: 12.0,
               ),
-              // SizedBox(height: paddging * 0.5),
-              SizedBox(height: 0.15 * format),
-              Text(
-                'ID: $qrId',
-                style: TextStyle(
-                  fontSize: 8.0,
-                  font: font,
-                  color: PdfColors.white,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-              //! ************** contact texts container
-              // SizedBox(height: paddging * 0.15),
-              // SizedBox(height: 0.2 * format),
-              SizedBox(height: 0.1 * format),
-              // SizedBox(height: 3.5),
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: TextStyle(
-                    lineSpacing: -4.0,
-                    // lineSpacing: -6.0,
-                    font: font,
-                    color: PdfColors.white,
-                  ),
-                  children: [
-                    /*    TextSpan(
-                      text: '${carLabelPdfLocale.contactTitle}\n',
-                      style: TextStyle(
-                        fontSize: carLabelPdfLocale.contactTitleFontSize,
-                        letterSpacing:
-                            carLabelPdfLocale.contactTitleLetterSpacing,
-                      ),
-                    ), */
-                    /* TextSpan(
-                      text: carLabelPdfLocale.contactSubtitle,
-                      style: TextStyle(
-                        fontSize: carLabelPdfLocale.contactSubtitleFontSize,
-                        letterSpacing:
-                            carLabelPdfLocale.contactSubtitleLetterSpacing,
-                      ),
-                    ), */
-                    TextSpan(
-                      // text: '${carLabelPdfLocale.contactTitle}\n',
-                      // text: '${carLabelPdfLocale.contactTitle}\n',
-                      text: 'FAHRZEUGHALTER\n',
-                      style: TextStyle(
-                        // fontSize: carLabelPdfLocale.contactTitleFontSize,
-                        fontSize: 13.0,
-                        letterSpacing: 0,
-                      ),
-                    ),
-                    TextSpan(
-                      text: 'ANONYM & SICHER\n',
-                      style: TextStyle(fontSize: 13.0, letterSpacing: 0),
-                    ),
-                    TextSpan(
-                      text: carLabelPdfLocale.contactSubtitle,
-                      style: TextStyle(fontSize: 13.0, letterSpacing: 0),
-                    ),
-                  ],
-                ),
-              ),
-              /*                 Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        style: TextStyle(
-                          lineSpacing: -6.0,
-                          font: font,
-                          color: PdfColors.white,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: '${carLabelPdfLocale.contactTitle}\n',
-                            style: TextStyle(
-                              fontSize: carLabelPdfLocale.contactTitleFontSize,
-                              letterSpacing:
-                                  carLabelPdfLocale.contactTitleLetterSpacing,
-                            ),
-                          ),
-                          TextSpan(
-                            text: carLabelPdfLocale.contactSubtitle,
-                            style: TextStyle(
-                              fontSize:
-                                  carLabelPdfLocale.contactSubtitleFontSize,
-                              letterSpacing: carLabelPdfLocale
-                                  .contactSubtitleLetterSpacing,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-/*                     SizedBox(
-                      height: 0.5 * format,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 0.15,
-                              horizontal: 0.12,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(2),
-                              border:
-                                  Border.all(color: PdfColors.white, width: 1),
-                            ),
-                            child: Image(appStoreImage),
-                          ),
-                          SizedBox(width: 0.1 * format),
-                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 0.15,
-                              horizontal: 0.12,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(2),
-                              border:
-                                  Border.all(color: PdfColors.white, width: 1),
-                            ),
-                            child: Image(playStoreImage),
-                          ),
-                        ],
-                      ),
-                    ), */
-                  ],
-                ), */
-              SizedBox(height: paddging * 0.5),
-            ],
+            ),
           ),
-        ),
-      ],
+
+          SizedBox(height: 2.5),
+
+          //! label gradient container
+          Container(
+            height: 13.0 * format, // TODO: remove
+            width: 9.5 * format,
+            alignment: Alignment.topCenter,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(K.rl + 2.0),
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  PdfColor.fromInt(0xFF00274F),
+                  PdfColor.fromInt(0xFF0D4280),
+                ],
+              ),
+            ),
+            child: Container(
+              margin: EdgeInsets.all(3.0),
+              padding: EdgeInsets.symmetric(horizontal: 15.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(K.rl),
+                border: Border.all(color: PdfColors.white, width: 2.0),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: paddging * 2.5),
+                  Row(
+                    mainAxisAlignment: .center,
+                    crossAxisAlignment: .end,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          carLabelPdfLocale.contactTitleV2,
+                          style: TextStyle(
+                            height: 0.0,
+                            letterSpacing:
+                                carLabelPdfLocale.contactTitleLetterSpacingV2,
+                            color: PdfColors.white,
+                            font: font,
+                            fontWeight: FontWeight.bold,
+                            fontSize: carLabelPdfLocale.contactTitleFontSizeV2,
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(width: 7.0),
+
+                      Container(
+                        height: 35.0,
+                        width: 35.0,
+                        padding: EdgeInsets.all(4.0),
+                        decoration: BoxDecoration(
+                          color: PdfColors.green800,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: PdfColors.white,
+                            width: 0.9,
+                          ),
+                        ),
+                        child: Image(callWaveIcon),
+                      ),
+                    ],
+                  ),
+
+                  //! ************** contact texts container
+                  Text(
+                    carLabelPdfLocale.contactSubtitleV2,
+                    style: TextStyle(
+                      height: 0.0,
+                      letterSpacing: 0.0,
+                      color: PdfColors.white,
+                      font: font,
+                      fontWeight: FontWeight.bold,
+                      fontSize: carLabelPdfLocale.contactSubtitleFontSizeV2,
+                    ),
+                  ),
+
+                  //! ************** id and  qrcode container
+                  SizedBox(height: paddging * 1.5),
+
+                  Text(
+                    'ID: $qrId',
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      font: idFont,
+                      color: PdfColors.white,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+
+                  SizedBox(height: paddging * 1.0),
+
+                  Container(
+                    padding: const EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      color: PdfColors.white,
+                      borderRadius: BorderRadius.circular(K.rm),
+                    ),
+                    child: BarcodeWidget(
+                      height: 4.0 * format,
+                      width: 4.0 * format,
+                      padding: EdgeInsets.zero,
+                      data: '${K.lookAppMsgBaseUrl}$qrId',
+                      barcode: Barcode.qrCode(),
+                    ),
+                  ),
+
+                  //! ************** look app logo and name and appstors icons
+                  SizedBox(height: paddging * 1.7),
+
+                  Image(launchIcon, width: 2.4 * format),
+
+                  Text(
+                    'LookApp',
+                    style: TextStyle(
+                      fontSize: 19.0,
+                      fontWeight: FontWeight.bold,
+                      color: PdfColors.white,
+                      letterSpacing: 0,
+                    ),
+                  ),
+
+                  SizedBox(height: paddging * 1.1),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
-
-  /*   static Column _carLabelV3({
-    int? index,
-    required CarLabelPdfLocaleModel carLabelPdfLocale,
-    required Font font,
-    required double format,
-    required String? qrId,
-    required MemoryImage launchIcon,
-    required MemoryImage appStoreImage,
-    required MemoryImage playStoreImage,
-  }) {
-    final paddging = 0.3 * format;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (index != null) SizedBox(height: 10),
-        if (index != null)
-          Text(
-            '$index',
-            style: TextStyle(
-              fontSize: 15.0,
-              font: font,
-              color: PdfColors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        SizedBox(height: 2),
-        Container(
-          height: 8.2 * format,
-          // width: 5.5 * format,
-          width: 6.0 * format,
-          alignment: Alignment.topCenter,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(K.rl),
-/*             gradient: const LinearGradient(
-              begin: Alignment.bottomRight,
-              end: Alignment.topLeft,
-              stops: [0.5, 0.7, 0.9],
-              colors: [
-                PdfColor.fromInt(0xFF013069),
-                PdfColor.fromInt(0xFF0e4c96),
-                PdfColor.fromInt(0xFF1161bf),
-              ],
-            ), */
-            gradient: const LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              stops: [0.4, 0.6, 0.9],
-              colors: [
-                PdfColor.fromInt(0xFF013069),
-                PdfColor.fromInt(0xFF0e4c96),
-                // PdfColor.fromInt(0xFF1161bf),
-                // PdfColor.fromInt(0xFF4097FF),
-                PdfColor.fromInt(0xFF3686E3),
-              ],
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              //! ************** look app logo and name and appstors icons
-              // SizedBox(height: paddging * 0.5),
-              SizedBox(height: 0.15 * format),
-              // Image(launchIcon, width: 1.7 * format),
-              Image(launchIcon, height: 1.7 * format),
-              Text(
-                'LookApp',
-                style: TextStyle(
-                  fontSize: 18.5,
-                  fontWeight: FontWeight.bold,
-                  color: PdfColors.white,
-                  letterSpacing: 0,
-                ),
-              ),
-
-              //! ************** qrcode container
-              // SizedBox(height: paddging * 0.5),
-              SizedBox(height: 0.3 * format),
-              Container(
-                // padding: const EdgeInsets.all(8.0),
-                padding: EdgeInsets.all(0.3 * format),
-                decoration: BoxDecoration(
-                  color: PdfColors.white,
-                  borderRadius: BorderRadius.circular(K.rm),
-                ),
-                child: BarcodeWidget(
-                  height: 2.5 * format,
-                  width: 2.5 * format,
-                  padding: EdgeInsets.zero,
-                  data: '${K.lookAppMsgBaseUrl}$qrId',
-                  barcode: Barcode.qrCode(),
-                ),
-              ),
-              // SizedBox(height: paddging * 0.5),
-              SizedBox(height: 0.15 * format),
-              Text(
-                'ID: $qrId',
-                style: TextStyle(
-                  fontSize: 8.0,
-                  font: font,
-                  color: PdfColors.white,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-              //! ************** contact texts container
-              // SizedBox(height: paddging * 0.15),
-              // SizedBox(height: 0.2 * format),
-              SizedBox(height: 0.1 * format),
-              // SizedBox(height: 3.5),
-              RichText(
-                text: TextSpan(
-                  style: TextStyle(
-                    lineSpacing: -6.0,
-                    font: font,
-                    color: PdfColors.white,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: '${carLabelPdfLocale.contactTitle}\n',
-                      style: TextStyle(
-                        fontSize: carLabelPdfLocale.contactTitleFontSize,
-                        letterSpacing:
-                            carLabelPdfLocale.contactTitleLetterSpacing,
-                      ),
-                    ),
-                    TextSpan(
-                      text: carLabelPdfLocale.contactSubtitle,
-                      style: TextStyle(
-                        fontSize: carLabelPdfLocale.contactSubtitleFontSize,
-                        letterSpacing:
-                            carLabelPdfLocale.contactSubtitleLetterSpacing,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-/*                 Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        style: TextStyle(
-                          lineSpacing: -6.0,
-                          font: font,
-                          color: PdfColors.white,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: '${carLabelPdfLocale.contactTitle}\n',
-                            style: TextStyle(
-                              fontSize: carLabelPdfLocale.contactTitleFontSize,
-                              letterSpacing:
-                                  carLabelPdfLocale.contactTitleLetterSpacing,
-                            ),
-                          ),
-                          TextSpan(
-                            text: carLabelPdfLocale.contactSubtitle,
-                            style: TextStyle(
-                              fontSize:
-                                  carLabelPdfLocale.contactSubtitleFontSize,
-                              letterSpacing: carLabelPdfLocale
-                                  .contactSubtitleLetterSpacing,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-/*                     SizedBox(
-                      height: 0.5 * format,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 0.15,
-                              horizontal: 0.12,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(2),
-                              border:
-                                  Border.all(color: PdfColors.white, width: 1),
-                            ),
-                            child: Image(appStoreImage),
-                          ),
-                          SizedBox(width: 0.1 * format),
-                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 0.15,
-                              horizontal: 0.12,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(2),
-                              border:
-                                  Border.all(color: PdfColors.white, width: 1),
-                            ),
-                            child: Image(playStoreImage),
-                          ),
-                        ],
-                      ),
-                    ), */
-                  ],
-                ), */
-              SizedBox(height: paddging * 0.5),
-            ],
-          ),
-        ),
-      ],
-    );
-  } */
 
   // TODO: remove at end
   // TODO: remove at end
@@ -1102,158 +934,6 @@ class PdfUtilsHelper {
   // TODO: remove at end
 
   // TODO: remove at end
-  static Column _carLabelV1({
-    int? index,
-    required CarLabelPdfLocaleModel carLabelPdfLocale,
-    required Font font,
-    required double format,
-    required String? qrId,
-    required MemoryImage launchIcon,
-    required MemoryImage appStoreImage,
-    required MemoryImage playStoreImage,
-  }) {
-    final paddging = 0.3 * format;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (index != null) SizedBox(height: 10),
-        if (index != null)
-          Text(
-            '$index',
-            style: TextStyle(
-              fontSize: 15.0,
-              // fontSize: 5.0,
-              font: font,
-              color: PdfColors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        SizedBox(height: 2),
-        Container(
-          width: 5.5 * format,
-          alignment: Alignment.topCenter,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(K.rl),
-            border: Border.all(color: PdfColors.blue400, width: 2),
-          ),
-          child: ClipRRect(
-            verticalRadius: K.rl,
-            horizontalRadius: K.rl,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                //! ************** look app logo and name and appstors icons
-                SizedBox(height: paddging * 1.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  // crossAxisAlignment: CrossAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    ClipRRect(
-                      horizontalRadius: K.rs,
-                      verticalRadius: K.rs,
-                      child: Image(launchIcon, width: 1 * format),
-                    ),
-                    SizedBox(width: 0.2 * format),
-                    Column(
-                      children: [
-                        Text(
-                          'LookApp',
-                          style: TextStyle(
-                            fontSize: 17.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 0.05 * format),
-                        SizedBox(
-                          height: 0.37 * format,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image(appStoreImage),
-                              SizedBox(width: 0.1 * format),
-                              Image(playStoreImage),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-
-                //! ************** qrcode container
-                SizedBox(height: paddging * 1.0),
-                Container(
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(K.rm),
-                    border: Border.all(color: PdfColors.grey600),
-                  ),
-                  child: BarcodeWidget(
-                    height: 2.8 * format,
-                    width: 2.8 * format,
-                    padding: EdgeInsets.zero,
-                    data: '${K.lookAppMsgBaseUrl}$qrId',
-                    barcode: Barcode.qrCode(),
-                  ),
-                ),
-                SizedBox(height: paddging * 1.0),
-                Text(
-                  'ID: $qrId',
-                  style: TextStyle(
-                    fontSize: 8.0,
-                    font: font,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-
-                //! ************** contact texts container
-                SizedBox(height: paddging * 0.5),
-                Container(
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(vertical: 6.0),
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [PdfColors.blue400, PdfColor.fromInt(0xFF004BA6)],
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        carLabelPdfLocale.contactTitle,
-                        style: TextStyle(
-                          height: 0.0,
-                          font: font,
-                          fontSize: carLabelPdfLocale.contactTitleFontSize,
-                          color: PdfColors.white,
-                        ),
-                      ),
-                      Text(
-                        carLabelPdfLocale.contactSubtitle,
-                        style: TextStyle(
-                          height: 0.0,
-                          font: font,
-                          fontSize: carLabelPdfLocale.contactSubtitleFontSize,
-                          color: PdfColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   //! ******************* gen products list
   static Future<File> genProductList(
     Document pdf, {
@@ -1362,9 +1042,11 @@ class PdfUtilsHelper {
         : '$downloadsPath/$subfolder';
     await Directory(targetDir).create(recursive: true);
 
-    final dateforFileName = Helpers.formatDateForFileName();
-    final name = '$fileName$dateforFileName.$extension';
-    final destPath = '$targetDir/$name';
+    // final dateforFileName = Helpers.formatDateForFileName();
+    // final name = '$fileName$dateforFileName.$extension';
+    // final destPath = '$targetDir/$name';
+
+    final destPath = '$targetDir/$fileName.$extension';
 
     // Copy and delete original
     final destFile = await sourceFile.copy(destPath);
@@ -1575,834 +1257,3 @@ class PdfUtilsHelper {
     );
   }
 }
-
-// TODO: orginal
-/* import 'package:albus_la_mobile//constants/consts.dart';
-import 'package:albus_la_mobile//gen/assets.gen.dart';
-import 'package:flutter/services.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart';
-import 'package:printing/printing.dart';
-
-class PdfUtils {
-  static Future<Uint8List> generatePdf({
-    required PdfPageFormat format,
-    required String? qrId,
-    String? topText,
-  }) async {
-    final pdf = Document(
-      version: PdfVersion.pdf_1_5,
-      compress: true,
-    );
-    final font = await PdfGoogleFonts.nunitoExtraLight();
-
-    //! play and app store images
-    final ByteData playStore =
-        await rootBundle.load(Assets.images.playStore.path);
-    final Uint8List playSotrebytes = playStore.buffer.asUint8List();
-    final playStoreImage = MemoryImage(playSotrebytes);
-
-    final ByteData appStore =
-        await rootBundle.load(Assets.images.appStore.path);
-    final Uint8List appStorebytes = appStore.buffer.asUint8List();
-    final appStoreImage = MemoryImage(appStorebytes);
-
-// TODO: this icon
-    final ByteData launch =
-        await rootBundle.load(Assets.icons.app.pdfLaunchIcon.path);
-    final Uint8List launchIconBytes = launch.buffer.asUint8List();
-    final launchIcon = MemoryImage(launchIconBytes);
-
-    const format = PdfPageFormat.cm;
-// TODO: pdf sized like vingite
-/*     pdf.addPage(
-      MultiPage(
-        build: (context) {
-          return [
-            _labe1(
-              topText: topText,
-              font: font,
-              format: format,
-              qrId: qrId,
-              launchIcon: launchIcon,
-              appStoreImage: appStoreImage,
-              playStoreImage: playStoreImage,
-            ),
-          ];
-        },
-      ),
-    ); */
-    pdf.addPage(
-      MultiPage(
-        // margin: EdgeInsets.zero,
-        margin: const EdgeInsets.only(top: 1 * format),
-        build: (context) {
-          final paddgingVertical = SizedBox(height: 1.5 * format);
-
-          return [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _labe1(
-                  topText: topText,
-                  font: font,
-                  format: format,
-                  qrId: qrId,
-                  launchIcon: launchIcon,
-                  appStoreImage: appStoreImage,
-                  playStoreImage: playStoreImage,
-                ),
-                _labeCircular1(
-                  topText: topText,
-                  font: font,
-                  format: format,
-                  qrId: qrId,
-                  launchIcon: launchIcon,
-                  appStoreImage: appStoreImage,
-                  playStoreImage: playStoreImage,
-                ),
-              ],
-            ),
-            paddgingVertical,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _labe2(
-                  topText: topText,
-                  font: font,
-                  format: format,
-                  qrId: qrId,
-                  launchIcon: launchIcon,
-                  appStoreImage: appStoreImage,
-                  playStoreImage: playStoreImage,
-                ),
-                _labeCircular2(
-                  topText: topText,
-                  font: font,
-                  format: format,
-                  qrId: qrId,
-                  launchIcon: launchIcon,
-                  appStoreImage: appStoreImage,
-                  playStoreImage: playStoreImage,
-                ),
-              ],
-            ),
-            paddgingVertical,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _labe3(
-                  topText: topText,
-                  font: font,
-                  format: format,
-                  qrId: qrId,
-                  launchIcon: launchIcon,
-                  appStoreImage: appStoreImage,
-                  playStoreImage: playStoreImage,
-                ),
-                _labeCircular3(
-                  topText: topText,
-                  font: font,
-                  format: format,
-                  qrId: qrId,
-                  launchIcon: launchIcon,
-                  appStoreImage: appStoreImage,
-                  playStoreImage: playStoreImage,
-                ),
-              ],
-            ),
-          ];
-        },
-      ),
-    );
-
-    pdf.addPage(Page(
-      build: (context) {
-        return _labe1(
-          topText: topText,
-          font: font,
-          format: format,
-          qrId: qrId,
-          launchIcon: launchIcon,
-          appStoreImage: appStoreImage,
-          playStoreImage: playStoreImage,
-        );
-      },
-    ));
-
-    pdf.addPage(Page(
-      build: (context) {
-        return _labe2(
-          topText: topText,
-          font: font,
-          format: format,
-          qrId: qrId,
-          launchIcon: launchIcon,
-          appStoreImage: appStoreImage,
-          playStoreImage: playStoreImage,
-        );
-      },
-    ));
-
-    pdf.addPage(Page(
-      build: (context) {
-        return _labe3(
-          topText: topText,
-          font: font,
-          format: format,
-          qrId: qrId,
-          launchIcon: launchIcon,
-          appStoreImage: appStoreImage,
-          playStoreImage: playStoreImage,
-        );
-      },
-    ));
-
-    pdf.addPage(Page(
-      build: (context) {
-        return _labeCircular1(
-          topText: topText,
-          font: font,
-          format: format,
-          qrId: qrId,
-          launchIcon: launchIcon,
-          appStoreImage: appStoreImage,
-          playStoreImage: playStoreImage,
-        );
-      },
-    ));
-
-    pdf.addPage(Page(
-      build: (context) {
-        return _labeCircular2(
-          topText: topText,
-          font: font,
-          format: format,
-          qrId: qrId,
-          launchIcon: launchIcon,
-          appStoreImage: appStoreImage,
-          playStoreImage: playStoreImage,
-        );
-      },
-    ));
-
-    pdf.addPage(Page(
-      build: (context) {
-        return _labeCircular3(
-          topText: topText,
-          font: font,
-          format: format,
-          qrId: qrId,
-          launchIcon: launchIcon,
-          appStoreImage: appStoreImage,
-          playStoreImage: playStoreImage,
-        );
-      },
-    ));
-
-    return pdf.save();
-  }
-
-  static Column _labe1({
-    required String? topText,
-    required Font font,
-    required double format,
-    required String? qrId,
-    required MemoryImage launchIcon,
-    required MemoryImage appStoreImage,
-    required MemoryImage playStoreImage,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-/*         Text(
-          topText ?? '',
-          style: TextStyle(
-            font: font,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 6 * format), */
-        Center(
-          child: Container(
-            width: 7 * format,
-            padding: EdgeInsets.only(
-              top: 0.4 * format,
-              bottom: 0.2 * format,
-              left: 1 * format,
-              right: 1 * format,
-            ),
-            alignment: Alignment.topCenter,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(K.rl),
-              border: Border.all(
-                color: PdfColors.grey500,
-                width: 0.1 * format,
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(qrId ?? ''),
-                SizedBox(height: 0.5 * format),
-                BarcodeWidget(
-                  height: 5 * format,
-                  width: 6 * format,
-                  data: '${K.lookAppMsgBaseUrl}$qrId',
-                  padding: EdgeInsets.zero,
-                  barcode: Barcode.qrCode(),
-                ),
-                SizedBox(height: 0.5 * format),
-                Row(children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: 0.1 * format),
-                    child: ClipRRect(
-                      horizontalRadius: K.rs,
-                      verticalRadius: K.rs,
-                      child: Image(
-                        launchIcon,
-                        width: 1 * format,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 0.3 * format),
-                  Text(
-                    'LookApp',
-                    style: TextStyle(
-                      // font: ttf,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ]),
-                SizedBox(
-                  height: 1.1 * format,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image(
-                        appStoreImage,
-                        width: 2.5 * format,
-                      ),
-                      SizedBox(width: 0.1 * format),
-                      Image(
-                        playStoreImage,
-                        width: 2.5 * format,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  static Column _labe2({
-    required String? topText,
-    required Font font,
-    required double format,
-    required String? qrId,
-    required MemoryImage launchIcon,
-    required MemoryImage appStoreImage,
-    required MemoryImage playStoreImage,
-  }) {
-    final paddging = 0.3 * format;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(
-          child: Container(
-            width: 5.5 * format,
-            padding: EdgeInsets.all(paddging),
-            alignment: Alignment.topCenter,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(K.rl),
-              border: Border.all(
-                color: PdfColors.grey500,
-                width: 0.1 * format,
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Contact Owner'),
-                SizedBox(height: paddging),
-                BarcodeWidget(
-                  height: 2.5 * format,
-                  width: 2.5 * format,
-                  data: '${K.lookAppMsgBaseUrl}$qrId',
-                  padding: EdgeInsets.zero,
-                  barcode: Barcode.qrCode(),
-                ),
-                SizedBox(height: paddging),
-                Text(qrId ?? ''),
-                SizedBox(height: paddging),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ClipRRect(
-                      horizontalRadius: K.rs,
-                      verticalRadius: K.rs,
-                      child: Image(
-                        launchIcon,
-                        width: 1 * format,
-                      ),
-                    ),
-                    SizedBox(width: 0.2 * format),
-                    Text(
-                      'LookApp',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: paddging * 0.5),
-                SizedBox(
-                  height: 0.6 * format,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Image(appStoreImage),
-                      ),
-                      SizedBox(width: 0.1 * format),
-                      Expanded(
-                        child: Image(playStoreImage),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  static Column _labe3({
-    required String? topText,
-    required Font font,
-    required double format,
-    required String? qrId,
-    required MemoryImage launchIcon,
-    required MemoryImage appStoreImage,
-    required MemoryImage playStoreImage,
-  }) {
-    final paddging = 0.2 * format;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(
-          child: Container(
-            width: 4 * format,
-            padding: EdgeInsets.all(paddging),
-            alignment: Alignment.topCenter,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(K.rm),
-              border: Border.all(
-                color: PdfColors.grey500,
-                width: 0.1 * format,
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Contact Owner',
-                  style: const TextStyle(fontSize: 10.0),
-                ),
-                SizedBox(height: paddging),
-                BarcodeWidget(
-                  height: 2 * format,
-                  width: 2 * format,
-                  data: '${K.lookAppMsgBaseUrl}$qrId',
-                  padding: EdgeInsets.zero,
-                  barcode: Barcode.qrCode(),
-                ),
-                SizedBox(height: paddging),
-                Text(
-                  qrId ?? '',
-                  style: const TextStyle(fontSize: 10.0),
-                ),
-                SizedBox(height: paddging),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ClipRRect(
-                      horizontalRadius: K.rs,
-                      verticalRadius: K.rs,
-                      child: Image(
-                        launchIcon,
-                        width: 0.75 * format,
-                      ),
-                    ),
-                    SizedBox(width: 0.2 * format),
-                    Text(
-                      'LookApp',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: paddging * 0.5),
-                SizedBox(
-                  height: 0.5 * format,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Image(appStoreImage),
-                      ),
-                      SizedBox(width: 0.1 * format),
-                      Expanded(
-                        child: Image(playStoreImage),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  static Center _labeCircular1({
-    required String? topText,
-    required Font font,
-    required double format,
-    required String? qrId,
-    required MemoryImage launchIcon,
-    required MemoryImage appStoreImage,
-    required MemoryImage playStoreImage,
-  }) {
-    final paddging = 0.4 * format;
-
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: Container(
-              height: 7 * format,
-              width: 7 * format,
-              padding: EdgeInsets.all(paddging),
-              alignment: Alignment.topCenter,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: PdfColors.grey500,
-                  width: 0.1 * format,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('Contact Owner'),
-                  SizedBox(height: paddging * 0.5),
-                  BarcodeWidget(
-                    height: 2 * format,
-                    width: 2 * format,
-                    data: '${K.lookAppMsgBaseUrl}$qrId',
-                    padding: EdgeInsets.zero,
-                    barcode: Barcode.qrCode(),
-                  ),
-                  SizedBox(height: paddging * 0.5),
-                  Text(
-                    qrId ?? '',
-                    style: const TextStyle(fontSize: 10),
-                  ),
-                  SizedBox(height: paddging * 0.5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ClipRRect(
-                        horizontalRadius: K.rs,
-                        verticalRadius: K.rs,
-                        child: Image(
-                          launchIcon,
-                          width: 1 * format,
-                        ),
-                      ),
-                      SizedBox(width: 0.2 * format),
-                      Text(
-                        'LookApp',
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: paddging * 0.5),
-                  SizedBox(
-                    height: 1.1 * format,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 0.9 * format),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Image(appStoreImage),
-                          ),
-                          SizedBox(width: 0.1 * format),
-                          Expanded(
-                            child: Image(playStoreImage),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '2025',
-                    style: TextStyle(
-                      fontSize: 7,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  static Center _labeCircular2({
-    required String? topText,
-    required Font font,
-    required double format,
-    required String? qrId,
-    required MemoryImage launchIcon,
-    required MemoryImage appStoreImage,
-    required MemoryImage playStoreImage,
-  }) {
-    final paddging = 0.3 * format;
-
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: Container(
-              height: 5.5 * format,
-              width: 5.5 * format,
-              padding: EdgeInsets.all(paddging),
-              alignment: Alignment.topCenter,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: PdfColors.grey500,
-                  width: 0.1 * format,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Contact Owner',
-                    style: const TextStyle(fontSize: 10),
-                  ),
-                  SizedBox(height: paddging * 0.5),
-                  BarcodeWidget(
-                    height: 1.7 * format,
-                    width: 1.7 * format,
-                    data: '${K.lookAppMsgBaseUrl}$qrId',
-                    padding: EdgeInsets.zero,
-                    barcode: Barcode.qrCode(),
-                  ),
-                  SizedBox(height: paddging * 0.5),
-                  Text(
-                    qrId ?? '',
-                    style: const TextStyle(fontSize: 9),
-                  ),
-                  SizedBox(height: paddging * 0.5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ClipRRect(
-                        horizontalRadius: K.rs,
-                        verticalRadius: K.rs,
-                        child: Image(
-                          launchIcon,
-                          width: 0.7 * format,
-                        ),
-                      ),
-                      SizedBox(width: 0.17 * format),
-                      Text(
-                        'LookApp',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: paddging * 0.1),
-                  SizedBox(
-                    height: 1 * format,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 0.7 * format),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Image(appStoreImage),
-                          ),
-                          SizedBox(width: 0.1 * format),
-                          Expanded(
-                            child: Image(playStoreImage),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '2025',
-                    style: TextStyle(
-                      fontSize: 5,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  static Center _labeCircular3({
-    required String? topText,
-    required Font font,
-    required double format,
-    required String? qrId,
-    required MemoryImage launchIcon,
-    required MemoryImage appStoreImage,
-    required MemoryImage playStoreImage,
-  }) {
-    final paddging = 0.21 * format;
-
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: Container(
-              height: 4.2 * format,
-              width: 4.2 * format,
-              padding: EdgeInsets.all(paddging),
-              alignment: Alignment.topCenter,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: PdfColors.grey500,
-                  width: 0.1 * format,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Contact Owner',
-                    style: const TextStyle(fontSize: 8),
-                  ),
-                  SizedBox(height: paddging * 0.5),
-                  BarcodeWidget(
-                    height: 1.4 * format,
-                    width: 1.4 * format,
-                    data: '${K.lookAppMsgBaseUrl}$qrId',
-                    padding: EdgeInsets.zero,
-                    barcode: Barcode.qrCode(),
-                  ),
-                  SizedBox(height: paddging * 0.5),
-                  Text(
-                    qrId ?? '',
-                    style: const TextStyle(fontSize: 8),
-                  ),
-                  SizedBox(height: paddging * 0.5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ClipRRect(
-                        horizontalRadius: K.rs,
-                        verticalRadius: K.rs,
-                        child: Image(
-                          launchIcon,
-                          width: 0.6 * format,
-                        ),
-                      ),
-                      SizedBox(width: 0.15 * format),
-                      Text(
-                        'LookApp',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: paddging * 0.2),
-                  SizedBox(
-                    height: 0.5 * format,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 0.7 * format),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Image(appStoreImage),
-                          ),
-                          SizedBox(width: 0.1 * format),
-                          Expanded(
-                            child: Image(playStoreImage),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: paddging * 0.2),
-                  Text(
-                    '2025',
-                    style: TextStyle(
-                      fontSize: 5,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
- */

@@ -70,6 +70,17 @@ class $AssetsImagesGen {
   ];
 }
 
+class $AssetsProductImagesGen {
+  const $AssetsProductImagesGen();
+
+  /// File path: assets/product_images/car_label_v1.png
+  AssetGenImage get carLabelV1 =>
+      const AssetGenImage('assets/product_images/car_label_v1.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [carLabelV1];
+}
+
 class $AssetsSoundsGen {
   const $AssetsSoundsGen();
 
@@ -286,6 +297,8 @@ class Assets {
   static const String aEnv = '.env';
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
+  static const $AssetsProductImagesGen productImages =
+      $AssetsProductImagesGen();
   static const $AssetsSoundsGen sounds = $AssetsSoundsGen();
   static const $AssetsSplashGen splash = $AssetsSplashGen();
   static const $AssetsUndrawsGen undraws = $AssetsUndrawsGen();
