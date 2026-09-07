@@ -64,10 +64,12 @@ class _PrintPdfPageState extends State<PrintPdfPage> {
           build: (format) {
             // final pdfQrcodeLocaleModel = AppLocaleServices.getLocaleByLangCode(BlocEventsHelper.getSettings(context).appLocalCode).pdfQrcodeLocaleModel;
 
-            return PdfUtilsHelper.generateTestPdfs(
+            /* return PdfUtilsHelper.generateTestPdfs(
               format: format,
               pdfType: _pdfType,
             );
+ */
+            return PdfUtilsHelper.firsPagePdfKeychain();
             // TODO
             /*             if (_pdfType == ProductPdfType.car) {
               return PdfUtils.generateCarPdfs(

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:albus_la_mobile/constants/app_locales/models/pdf/keychain_pdf_locale_model.dart';
 import 'package:albus_la_mobile/features/home/presentation/providers/models/gen_qrcode/gen_product.dart';
+import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:albus_la_mobile/constants/app_locales/app_locale_services.dart';
@@ -14,12 +15,22 @@ import 'package:pdf/widgets.dart';
 import 'package:pdf_combiner/models/merge_input.dart';
 import 'package:pdf_combiner/pdf_combiner.dart';
 import 'package:printing/printing.dart';
+import 'package:image/image.dart' as img;
 
 import 'pdf_utils_helper.dart';
 
-enum KeychainPdfType { metalSliver, list }
+enum KeychainPdfCsvType { metalSliver, list, firstPage, csv }
 
-class KeychainPdfUtils {
+class KeychainPdfCsvUtils {
+  /// **'keychain_csv_'**
+  static const _csvFileName = 'keychain_csv_';
+
+  /// **'keychain_first_page_'**
+  static const _firstPageFileName = 'keychain_first_page_';
+
+  /// **'keychain_list_'**
+  static const _listFileName = 'keychain_list_';
+
   //! ******************* gen orginal pdf
   /// Generate large PDF without memory issues
   static Future<File> genMetalSilverPdf({
@@ -155,8 +166,8 @@ class KeychainPdfUtils {
         .map((p) => GenProduct.fromJsonGenPdf(p))
         .toList();
     final labelsPerPage = data['labelsPerPage'] as int;
-    final playStoreImage = MemoryImage(data['playStoreBytes'] as Uint8List);
-    final appStoreImage = MemoryImage(data['appStoreBytes'] as Uint8List);
+    // final playStoreImage = MemoryImage(data['playStoreBytes'] as Uint8List);
+    // final appStoreImage = MemoryImage(data['appStoreBytes'] as Uint8List);
     final launchIcon = MemoryImage(data['launchIconBytes'] as Uint8List);
     final keychainPdfLocale = KeychainPdfLocaleModel.fromJson(
       data['keychainPdfLocale'],
@@ -170,6 +181,7 @@ class KeychainPdfUtils {
     final pdf = Document(version: PdfVersion.pdf_1_5, compress: true);
 
     final font = await PdfGoogleFonts.jetBrainsMonoBold();
+    final idFont = await PdfGoogleFonts.jetBrainsMonoBold();
     const format = PdfPageFormat.cm;
 
     final totalPagesInChunk = (products.length / labelsPerPage).ceil();
@@ -192,12 +204,13 @@ class KeychainPdfUtils {
         launchIcon: launchIcon,
         child: _firstPageExampleChild(
           font: font,
+          idFont: idFont,
           format: format,
           qrId: 'testQrId77',
           keychainPdfLocale: keychainPdfLocale,
           launchIcon: launchIcon,
-          appStoreImage: appStoreImage,
-          playStoreImage: playStoreImage,
+          // appStoreImage: appStoreImage,
+          // playStoreImage: playStoreImage,
         ),
       );
     }
@@ -233,15 +246,12 @@ class KeychainPdfUtils {
                       childAspectRatio: 1.37,
                       children: List.generate(pageProducts.length, (i) {
                         return _metalSilverBack(
-                          // index: globalStartIndex + i,
                           index: pageProducts[i].index,
-                          keychainPdfLocale: keychainPdfLocale,
                           font: font,
+                          idFont: idFont,
                           format: format,
                           qrId: pageProducts[i].id,
-                          launchIcon: launchIcon,
-                          appStoreImage: appStoreImage,
-                          playStoreImage: playStoreImage,
+                          keychainPdfLocale: keychainPdfLocale,
                         );
                       }),
                     ),
@@ -274,52 +284,189 @@ class KeychainPdfUtils {
     final localeModel = AppLocaleServices.getLocaleByLangCode(locale);
 
     // Load images once
-    final playStoreBytes = (await rootBundle.load(
+    /*     final playStoreBytes = (await rootBundle.load(
       Assets.images.playStoreDark.path,
-    )).buffer.asUint8List();
-    final appStoreBytes = (await rootBundle.load(
+    )).buffer.asUint8List(); */
+    /*     final appStoreBytes = (await rootBundle.load(
       Assets.images.appStoreDark.path,
-    )).buffer.asUint8List();
+    )).buffer.asUint8List(); */
     final launchIconBytes = (await rootBundle.load(
       Assets.icons.app.pdfLaunchIconNew.path,
     )).buffer.asUint8List();
 
     final font = await PdfGoogleFonts.jetBrainsMonoBold();
+    final idFont = await PdfGoogleFonts.jetBrainsMonoBold();
     const format = PdfPageFormat.cm;
 
     final pdf = Document(version: PdfVersion.pdf_1_5, compress: true);
 
+    final fileName = '$_listFileName${locale}_${group?.groupNr}';
+
     final finalFile = await PdfUtilsHelper.genProductList(
       pdf,
       productType: 'Schlüsselanhänger',
-      fileName: 'keychain_lists_',
+      fileName: fileName,
       groupNr: group?.groupNr,
       genProducts: genProducts,
       version: localeModel.languageModel.de,
       launchIconBytes: launchIconBytes,
       child: _firstPageExampleChild(
         font: font,
+        idFont: idFont,
         format: format,
         qrId: 'testQrId77',
         keychainPdfLocale: localeModel.pdfLocaleModel.keychain,
         launchIcon: MemoryImage(launchIconBytes),
-        appStoreImage: MemoryImage(appStoreBytes),
-        playStoreImage: MemoryImage(playStoreBytes),
+        // appStoreImage: MemoryImage(appStoreBytes),
+        // playStoreImage: MemoryImage(playStoreBytes),
       ),
     );
 
     return finalFile;
   }
 
-  //! ******************* widget
-  static _firstPageExampleChild({
+  //! ******************* gen first page pdf *******************
+  /// Generate large PDF without memory issues
+  static Future<File> genFirsPagePdf() async {
+    final locale = ProductsPdfBtmSheetRoutes.locale;
+    final genProducts = ProductsPdfBtmSheetRoutes.genProducts;
+    final group = ProductsPdfBtmSheetRoutes.group;
+    final localeModel = AppLocaleServices.getLocaleByLangCode(locale);
+
+    // Load images once
+    final launchIconBytes = (await rootBundle.load(
+      Assets.icons.app.pdfLaunchIconNew.path,
+    )).buffer.asUint8List();
+
+    final blackLogoIcon = await createColoredLogo(
+      launchIconBytes,
+      r: 0,
+      g: 0,
+      b: 0,
+    );
+
+    final font = await PdfGoogleFonts.jetBrainsMonoBold();
+    final idFont = await PdfGoogleFonts.jetBrainsMonoBold();
+    const format = PdfPageFormat.cm;
+
+    final pdf = Document(version: PdfVersion.pdf_1_5, compress: true);
+
+    PdfUtilsHelper.addFirstPage(
+      pdf,
+      productType: 'Schlüsselanhänger',
+      version: localeModel.languageModel.de,
+      producktLenght: genProducts.length.toString(),
+      groupNr: group?.groupNr.toString(),
+      launchIcon: MemoryImage(launchIconBytes),
+      child: _firstPageExampleChild(
+        keychainPdfLocale: localeModel.pdfLocaleModel.keychain,
+        font: font,
+        idFont: idFont,
+        format: format,
+        qrId: 'testQrId77',
+        launchIcon: blackLogoIcon,
+      ),
+    );
+
+    final fileName = '$_firstPageFileName${locale}_${group?.groupNr}';
+
+    // Save PDF
+    final tempDir = await getTemporaryDirectory();
+    final outputPath =
+        '${tempDir.path}/$fileName${DateTime.now().millisecondsSinceEpoch}.pdf';
+
+    final pdfBytes = await pdf.save();
+    await File(outputPath).writeAsBytes(pdfBytes);
+
+    // Move to Downloads
+    final finalFile = await PdfUtilsHelper.moveToDownloads(
+      File(outputPath),
+      fileName,
+      subfolder: 'lookApp/${group?.groupNr ?? 'unknown'}',
+    );
+
+    final fileSize = await finalFile.length();
+    print('Final PDF: ${finalFile.path}');
+    print('Size: ${(fileSize / 1024 / 1024).toStringAsFixed(2)} MB');
+
+    return finalFile;
+  }
+
+  //! ******************* gen csv *******************
+  /// Generate CSV with index, activationCode, id, qrcode, title and secondaryTitle for all products
+  static Future<File> genCsv() async {
+    final locale = ProductsPdfBtmSheetRoutes.locale;
+    final groupNr = ProductsPdfBtmSheetRoutes.group?.groupNr != null
+        ? (ProductsPdfBtmSheetRoutes.group?.groupNr).toString()
+        : null;
+    final genProducts = ProductsPdfBtmSheetRoutes.genProducts;
+    final keychainLocale = AppLocaleServices.getLocaleByLangCode(
+      locale,
+    ).pdfLocaleModel.keychain;
+
+    final fileName = '$_csvFileName${locale}_$groupNr';
+
+    final rows = [
+      ['Index', 'ID', 'QR Code', 'Title', 'Secondary Title'],
+      for (final product in genProducts)
+        [
+          product.index,
+          product.id,
+          '${K.lookAppMsgBaseUrl}${product.id}',
+          keychainLocale.contactTitle,
+          keychainLocale.contactSubtitle,
+        ],
+    ];
+    final csvData =
+        '${const ListToCsvConverter(fieldDelimiter: ';', eol: '\n').convert(rows)}\n';
+
+    final tempDir = await getTemporaryDirectory();
+    final tempPath =
+        '${tempDir.path}/keychain_${DateTime.now().millisecondsSinceEpoch}.csv';
+    final tempFile = await File(tempPath).writeAsString(csvData);
+
+    final finalFile = await PdfUtilsHelper.moveToDownloads(
+      tempFile,
+      fileName,
+      subfolder: 'lookApp/${groupNr ?? 'unknown'}',
+      extension: 'csv',
+    );
+
+    return finalFile;
+  }
+
+  //! ******************* widgets and helpers *******************
+  static Future<MemoryImage> createColoredLogo(
+    Uint8List logoBytes, {
+    int r = 0,
+    int g = 0,
+    int b = 0,
+  }) async {
+    final image = img.decodeImage(logoBytes)!;
+
+    for (int y = 0; y < image.height; y++) {
+      for (int x = 0; x < image.width; x++) {
+        final pixel = image.getPixel(x, y);
+        final alpha = pixel.a;
+
+        if (alpha > 0) {
+          image.setPixel(x, y, img.ColorRgba8(r, g, b, alpha.toInt()));
+        }
+      }
+    }
+
+    return MemoryImage(Uint8List.fromList(img.encodePng(image)));
+  }
+
+  static Widget _firstPageExampleChild({
     required Font font,
+    required Font idFont,
     required double format,
     required String? qrId,
     required KeychainPdfLocaleModel keychainPdfLocale,
     required MemoryImage launchIcon,
-    required MemoryImage appStoreImage,
-    required MemoryImage playStoreImage,
+    // required MemoryImage appStoreImage,
+    // required MemoryImage playStoreImage,
   }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -330,18 +477,18 @@ class KeychainPdfUtils {
           qrId: qrId,
           keychainPdfLocale: keychainPdfLocale,
           launchIcon: launchIcon,
-          appStoreImage: appStoreImage,
-          playStoreImage: playStoreImage,
+          // appStoreImage: appStoreImage,
+          // playStoreImage: playStoreImage,
         ),
+
         SizedBox(width: 30),
+
         _metalSilverBack(
           font: font,
+          idFont: idFont,
           format: format,
           qrId: qrId,
           keychainPdfLocale: keychainPdfLocale,
-          launchIcon: launchIcon,
-          appStoreImage: appStoreImage,
-          playStoreImage: playStoreImage,
         ),
       ],
     );
@@ -353,31 +500,23 @@ class KeychainPdfUtils {
     required String? qrId,
     required KeychainPdfLocaleModel keychainPdfLocale,
     required MemoryImage launchIcon,
-    required MemoryImage appStoreImage,
-    required MemoryImage playStoreImage,
   }) {
     return Container(
       height: 7.0 * format,
       width: 4.0 * format,
       alignment: Alignment.topCenter,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(55.0),
-        gradient: const LinearGradient(
-          begin: Alignment.bottomRight,
-          end: Alignment.topLeft,
-          stops: [0.5, 0.7, 0.9],
-          colors: [
-            PdfColor.fromInt(0xFF013069),
-            PdfColor.fromInt(0xFF0e4c96),
-            PdfColor.fromInt(0xFF1161bf),
-          ],
-        ),
+        borderRadius: BorderRadius.circular(40),
+        border: Border.all(color: PdfColors.black, width: 0.1),
+        color: PdfColors.grey200,
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: .min,
+        mainAxisAlignment: .center,
         children: [
+          SizedBox(height: 7.0),
+
           //! ************** Keyring hole
-          SizedBox(height: 10.0),
           Container(
             height: 12.0,
             width: 12.0,
@@ -388,16 +527,21 @@ class KeychainPdfUtils {
               border: Border.all(color: PdfColors.black, width: 1.5),
             ),
           ),
+
+          SizedBox(height: 25.0),
+
           //! ************** look app logo and name and appstors icons
-          SizedBox(height: 22.0),
           Image(launchIcon, width: 75.0),
-          SizedBox(height: 10.0),
+
+          SizedBox(height: 15.0),
+
           Text(
             'LookApp',
             style: TextStyle(
+              font: font,
               fontSize: 18.5,
               fontWeight: FontWeight.bold,
-              color: PdfColors.white,
+              color: PdfColors.black,
               letterSpacing: 0,
             ),
           ),
@@ -409,17 +553,16 @@ class KeychainPdfUtils {
   static Column _metalSilverBack({
     int? index,
     required Font font,
+    required Font idFont,
     required double format,
     required String? qrId,
     required KeychainPdfLocaleModel keychainPdfLocale,
-    required MemoryImage launchIcon,
-    required MemoryImage appStoreImage,
-    required MemoryImage playStoreImage,
   }) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         if (index != null) SizedBox(height: 10),
+
         if (index != null)
           Text(
             '$index',
@@ -430,29 +573,24 @@ class KeychainPdfUtils {
               fontWeight: FontWeight.bold,
             ),
           ),
+
         SizedBox(height: 2),
+
         Container(
           height: 7.0 * format,
           width: 4.0 * format,
           alignment: Alignment.topCenter,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(55.0),
-            gradient: const LinearGradient(
-              begin: Alignment.bottomRight,
-              end: Alignment.topLeft,
-              stops: [0.5, 0.7, 0.9],
-              colors: [
-                PdfColor.fromInt(0xFF013069),
-                PdfColor.fromInt(0xFF0e4c96),
-                PdfColor.fromInt(0xFF1161bf),
-              ],
-            ),
+            borderRadius: BorderRadius.circular(40),
+            border: Border.all(color: PdfColors.black, width: 0.1),
+            color: PdfColors.grey200,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              SizedBox(height: 7.0),
+
               //! ************** Keyring hole
-              SizedBox(height: 10.0),
               Container(
                 height: 12.0,
                 width: 12.0,
@@ -464,49 +602,52 @@ class KeychainPdfUtils {
                 ),
               ),
 
-              //! ************** Contact owner text
               SizedBox(height: 10),
+
+              //! ************** Contact owner text
               Text(
                 keychainPdfLocale.contactTitle,
                 style: TextStyle(
+                  font: font,
                   fontSize: keychainPdfLocale.contactTitleFontSize,
-                  fontWeight: FontWeight.bold,
-                  color: PdfColors.white,
                   letterSpacing: keychainPdfLocale.contactTitleLetterSpacing,
+                  fontWeight: FontWeight.bold,
+                  color: PdfColors.black,
                 ),
               ),
 
-              //! ************** qrcode container
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                margin: const EdgeInsets.only(top: 10.0, bottom: 5.0),
-                decoration: BoxDecoration(
-                  color: PdfColors.white,
-                  borderRadius: BorderRadius.circular(K.rm),
-                ),
-                child: BarcodeWidget(
-                  height: 2.5 * format,
-                  width: 2.5 * format,
-                  padding: EdgeInsets.zero,
-                  data: '${K.lookAppMsgBaseUrl}$qrId',
-                  barcode: Barcode.qrCode(),
+              Text(
+                keychainPdfLocale.contactSubtitle,
+                style: TextStyle(
+                  font: font,
+                  fontSize: keychainPdfLocale.contactSubtitleFontSize,
+                  letterSpacing: keychainPdfLocale.contactTitleLetterSpacing,
+                  fontWeight: FontWeight.bold,
+                  color: PdfColors.black,
                 ),
               ),
+
+              SizedBox(height: 10),
+
+              //! ************** qrcode container
+              BarcodeWidget(
+                height: 2.5 * format,
+                width: 2.5 * format,
+                padding: EdgeInsets.zero,
+                data: '${K.lookAppMsgBaseUrl}$qrId',
+                barcode: Barcode.qrCode(),
+              ),
+
+              SizedBox(height: 10),
+
               Text(
                 'ID: $qrId',
                 style: TextStyle(
-                  fontSize: 8.0,
-                  font: font,
-                  color: PdfColors.white,
+                  fontSize: 10.0,
+                  font: idFont,
+                  color: PdfColors.black,
                   fontWeight: FontWeight.normal,
                 ),
-              ),
-
-              //! ************** Year text
-              SizedBox(height: 13.0),
-              Text(
-                DateTime.now().year.toString(),
-                style: const TextStyle(fontSize: 9.0, color: PdfColors.white),
               ),
             ],
           ),

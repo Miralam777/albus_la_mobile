@@ -3,7 +3,6 @@ import 'package:albus_la_mobile/constants/icons.dart';
 import 'package:albus_la_mobile/core/utils/helpers/media_helper.dart';
 import 'package:albus_la_mobile/core/widgets/primary_app_bar.dart';
 import 'package:albus_la_mobile/features/add_product_id/presentation/pdf_utils/models/product_pdf_type_enum.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

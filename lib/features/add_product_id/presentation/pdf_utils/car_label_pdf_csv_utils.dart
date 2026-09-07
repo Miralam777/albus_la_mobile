@@ -362,7 +362,9 @@ class CarLabelPdfCsvUtils {
                           ),
                         ),
                       ),
+
                       SizedBox(width: 5.0),
+
                       Container(
                         height: 27.0,
                         width: 27.0,
@@ -395,8 +397,9 @@ class CarLabelPdfCsvUtils {
                     ),
                   ),
 
-                  //! ************** id and  qrcode container
                   SizedBox(height: paddging * 0.5),
+
+                  //! ************** id and  qrcode container
                   Text(
                     'ID: $qrId',
                     style: TextStyle(
@@ -406,6 +409,7 @@ class CarLabelPdfCsvUtils {
                       fontWeight: FontWeight.normal,
                     ),
                   ),
+
                   SizedBox(height: paddging * 0.5),
 
                   Container(
@@ -423,12 +427,15 @@ class CarLabelPdfCsvUtils {
                     ),
                   ),
 
-                  //! ************** look app logo and name and appstors icons
                   SizedBox(height: paddging * 0.7),
+
+                  //! ************** look app logo and name and appstors icons
                   Image(launchIcon, width: 1.2 * format),
+
                   Text(
                     'LookApp',
                     style: TextStyle(
+                      font: font,
                       fontSize: 13.0,
                       fontWeight: FontWeight.bold,
                       color: PdfColors.white,
@@ -763,6 +770,7 @@ class CarLabelPdfCsvUtils {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(height: paddging * 2.5),
+
                   Row(
                     mainAxisAlignment: .center,
                     crossAxisAlignment: .end,
@@ -844,14 +852,15 @@ class CarLabelPdfCsvUtils {
                     ),
                   ),
 
-                  //! ************** look app logo and name and appstors icons
                   SizedBox(height: paddging * 1.7),
 
+                  //! ************** look app logo and name and appstors icons
                   Image(launchIcon, width: 2.4 * format),
 
                   Text(
                     'LookApp',
                     style: TextStyle(
+                      font: font,
                       fontSize: 19.0,
                       fontWeight: FontWeight.bold,
                       color: PdfColors.white,
@@ -867,48 +876,6 @@ class CarLabelPdfCsvUtils {
         ],
       ),
     );
-  }
-
-  //! ******************* gen csv *******************
-  /// Generate CSV with index, activationCode, id, qrcode, title and secondaryTitle for all products
-  static Future<File> genCsv() async {
-    final locale = ProductsPdfBtmSheetRoutes.locale;
-    final groupNr = ProductsPdfBtmSheetRoutes.group?.groupNr != null
-        ? (ProductsPdfBtmSheetRoutes.group?.groupNr).toString()
-        : null;
-    final genProducts = ProductsPdfBtmSheetRoutes.genProducts;
-    final carLabelPdfLocale = AppLocaleServices.getLocaleByLangCode(
-      locale,
-    ).pdfLocaleModel.carLabel;
-
-    final rows = [
-      ['Index', 'Activation Code', 'ID', 'QR Code', 'Title', 'Secondary Title'],
-      for (final product in genProducts)
-        [
-          product.index,
-          product.pin,
-          product.id,
-          '${K.lookAppMsgBaseUrl}${product.id}',
-          carLabelPdfLocale.contactTitle,
-          carLabelPdfLocale.contactSubtitle,
-        ],
-    ];
-    final csvData =
-        '${const ListToCsvConverter(fieldDelimiter: ';', eol: '\n').convert(rows)}\n';
-
-    final tempDir = await getTemporaryDirectory();
-    final tempPath =
-        '${tempDir.path}/car_labels_${DateTime.now().millisecondsSinceEpoch}.csv';
-    final tempFile = await File(tempPath).writeAsString(csvData);
-
-    final finalFile = await PdfUtilsHelper.moveToDownloads(
-      tempFile,
-      'car_labels_csv',
-      subfolder: 'lookApp/${groupNr ?? 'unknown'}',
-      extension: 'csv',
-    );
-
-    return finalFile;
   }
 
   //! ******************* gen list pdf *******************
@@ -1034,4 +1001,48 @@ class CarLabelPdfCsvUtils {
 
     return finalFile;
   }
+
+  //! ******************* gen csv *******************
+  /// Generate CSV with index, activationCode, id, qrcode, title and secondaryTitle for all products
+  static Future<File> genCsv() async {
+    final locale = ProductsPdfBtmSheetRoutes.locale;
+    final groupNr = ProductsPdfBtmSheetRoutes.group?.groupNr != null
+        ? (ProductsPdfBtmSheetRoutes.group?.groupNr).toString()
+        : null;
+    final genProducts = ProductsPdfBtmSheetRoutes.genProducts;
+    final carLabelPdfLocale = AppLocaleServices.getLocaleByLangCode(
+      locale,
+    ).pdfLocaleModel.carLabel;
+
+    final rows = [
+      ['Index', 'Activation Code', 'ID', 'QR Code', 'Title', 'Secondary Title'],
+      for (final product in genProducts)
+        [
+          product.index,
+          product.pin,
+          product.id,
+          '${K.lookAppMsgBaseUrl}${product.id}',
+          carLabelPdfLocale.contactTitle,
+          carLabelPdfLocale.contactSubtitle,
+        ],
+    ];
+    final csvData =
+        '${const ListToCsvConverter(fieldDelimiter: ';', eol: '\n').convert(rows)}\n';
+
+    final tempDir = await getTemporaryDirectory();
+    final tempPath =
+        '${tempDir.path}/car_labels_${DateTime.now().millisecondsSinceEpoch}.csv';
+    final tempFile = await File(tempPath).writeAsString(csvData);
+
+    final finalFile = await PdfUtilsHelper.moveToDownloads(
+      tempFile,
+      'car_labels_csv',
+      subfolder: 'lookApp/${groupNr ?? 'unknown'}',
+      extension: 'csv',
+    );
+
+    return finalFile;
+  }
+
+  //! ******************* widgets *******************
 }

@@ -81,11 +81,12 @@ class AppLocaleServices {
           contactSubtitleV2: 'DIREKT KONTAKTIEREN',
           contactSubtitleFontSizeV2: 20.25,
         ),
-        // TODO:
         keychain: KeychainPdfLocaleModel(
           locale: 'de',
-          contactTitle: 'INHABER KONTAKTIEREN',
-          contactTitleFontSize: 15.0,
+          contactTitle: 'Besitzer',
+          contactTitleFontSize: 12.0,
+          contactSubtitle: 'kontaktieren',
+          contactSubtitleFontSize: 12.0,
         ),
         // TODO:
         card: CardPdfLocaleModel(
@@ -132,8 +133,10 @@ class AppLocaleServices {
         // TODO:
         keychain: KeychainPdfLocaleModel(
           locale: 'en',
-          contactTitle: 'Contact Owner',
-          contactTitleFontSize: 13.0,
+          contactTitle: 'Contact',
+          contactTitleFontSize: 15,
+          contactSubtitle: 'Owner',
+          contactSubtitleFontSize: 15.0,
         ),
         // TODO:
         card: CardPdfLocaleModel(
@@ -183,6 +186,8 @@ class AppLocaleServices {
           locale: 'es',
           contactTitle: 'Contact Owner',
           contactTitleFontSize: 13.0,
+          contactSubtitle: 'TODO',
+          contactSubtitleFontSize: 41.0,
         ),
         // TODO:
         card: CardPdfLocaleModel(
@@ -233,6 +238,8 @@ class AppLocaleServices {
           locale: 'fr',
           contactTitle: 'Contact Owner',
           contactTitleFontSize: 13.0,
+          contactSubtitle: 'TODO',
+          contactSubtitleFontSize: 41.0,
         ),
         // TODO:
         card: CardPdfLocaleModel(
@@ -282,6 +289,8 @@ class AppLocaleServices {
           locale: 'it',
           contactTitle: 'Contact Owner',
           contactTitleFontSize: 13.0,
+          contactSubtitle: 'TODO',
+          contactSubtitleFontSize: 41.0,
         ),
         // TODO:
         card: CardPdfLocaleModel(
@@ -331,6 +340,8 @@ class AppLocaleServices {
           locale: 'tr',
           contactTitle: 'Contact Owner',
           contactTitleFontSize: 13.0,
+          contactSubtitle: 'TODO',
+          contactSubtitleFontSize: 41.0,
         ),
         // TODO:
         card: CardPdfLocaleModel(
@@ -381,6 +392,8 @@ class AppLocaleServices {
           locale: 'hi',
           contactTitle: 'Contact Owner',
           contactTitleFontSize: 13.0,
+          contactSubtitle: 'TODO',
+          contactSubtitleFontSize: 41.0,
         ),
         // TODO:
         card: CardPdfLocaleModel(
@@ -431,6 +444,8 @@ class AppLocaleServices {
           locale: 'ar',
           contactTitle: 'Contact Owner',
           contactTitleFontSize: 13.0,
+          contactSubtitle: 'TODO',
+          contactSubtitleFontSize: 41.0,
         ),
         // TODO:
         card: CardPdfLocaleModel(

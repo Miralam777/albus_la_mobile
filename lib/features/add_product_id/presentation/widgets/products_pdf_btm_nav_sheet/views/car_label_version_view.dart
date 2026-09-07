@@ -120,36 +120,36 @@ class CarLabelVersionView extends StatelessWidget {
     await Future.delayed(const Duration(milliseconds: 100));
 
     try {
-      File? pdfFile;
+      File? file;
 
       if (pdfType == CarLabelPdfCsvType.v1) {
-        pdfFile = await CarLabelPdfCsvUtils.genLabelPdfV1(
+        file = await CarLabelPdfCsvUtils.genLabelPdfV1(
           onProgress: (status, current, total) {
             progressNotifier.value = '$status: $current / $total';
           },
         );
       } else if (pdfType == CarLabelPdfCsvType.v2) {
-        pdfFile = await CarLabelPdfCsvUtils.genLabelPdfV2(
+        file = await CarLabelPdfCsvUtils.genLabelPdfV2(
           onProgress: (status, current, total) {
             progressNotifier.value = '$status: $current / $total';
           },
         );
       } else if (pdfType == CarLabelPdfCsvType.list) {
         progressNotifier.value = 'List generiert...';
-        pdfFile = await CarLabelPdfCsvUtils.genListPdf();
+        file = await CarLabelPdfCsvUtils.genListPdf();
       } else if (pdfType == CarLabelPdfCsvType.firstPage) {
         progressNotifier.value = 'First page generiert...';
-        pdfFile = await CarLabelPdfCsvUtils.genFirsPagePdf(firstPageVersion!);
+        file = await CarLabelPdfCsvUtils.genFirsPagePdf(firstPageVersion!);
       } else if (pdfType == CarLabelPdfCsvType.csv) {
         progressNotifier.value = 'CSV generiert...';
-        pdfFile = await CarLabelPdfCsvUtils.genCsv();
+        file = await CarLabelPdfCsvUtils.genCsv();
       }
 
       if (!context.mounted) return;
       context.pop();
 
-      if (pdfFile != null) {
-        OpenFilex.open(pdfFile.path);
+      if (file != null) {
+        OpenFilex.open(file.path);
       }
     } catch (e) {
       context.pop();
