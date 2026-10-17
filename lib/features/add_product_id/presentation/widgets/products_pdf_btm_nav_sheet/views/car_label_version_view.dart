@@ -103,8 +103,8 @@ class CarLabelVersionView extends StatelessWidget {
     CarLabelPdfCsvType pdfType,
   ) async {
     // TODO: remove only for test build
-    // context.push(Routes.printPdfPage);
-    // return;
+    context.push(Routes.printPdfPage);
+    return;
     // TODO: orginal
 
     String? firstPageVersion; // v1, v2

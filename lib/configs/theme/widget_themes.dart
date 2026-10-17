@@ -4,7 +4,7 @@ class WidgetThemes {
   WidgetThemes._();
   // TODO: clean
 
-//! light colors
+  //! light colors
   static const Color lightPrimaryColor = Color(0xFF004BA6);
   static const Color lightSecondaryColor = Color(0xFF1E67C0);
   static const Color lightScaffoldBackgroundColor = Color(0xFFE3E3E3);
@@ -16,7 +16,7 @@ class WidgetThemes {
   static const Color _lightErrorContainer = Color(0xFFFF9891);
   static const Color _lightErrorColor = Color(0xFFB00020);
 
-//! dark colors
+  //! dark colors
   static const Color darkPrimaryColor = Color(0xFF004BA6);
   static const Color darkSecondaryColor = Color(0xFF1E67C0);
   static const Color darkScaffoldBackgroundColor = Color(0xFF111010);
@@ -28,71 +28,70 @@ class WidgetThemes {
   static const Color _darkErrorContainer = Color(0xFFA0281F);
   static const Color _darkErrorColor = Color(0xFFCF6679);
 
-//! colors
+  //! colors
   static const Color _white = Color(0xFFFFFFFF);
   static const Color _black = Color(0xFF000000);
 
-//! brightness
+  //! brightness
   static Brightness brightness({bool isDark = false}) =>
       isDark ? Brightness.dark : Brightness.light;
 
-//! color scheme
+  //! color scheme
   static ColorScheme colorScheme({bool isDark = false}) => ColorScheme(
-        brightness: brightness(isDark: isDark),
-        primary: isDark ? darkPrimaryColor : lightPrimaryColor,
-        onPrimary: _white,
-        secondary: isDark ? darkSecondaryColor : lightSecondaryColor,
-        onSecondary: isDark ? _white : _black,
-        error: isDark ? _darkErrorColor : _lightErrorColor,
-        onError: isDark ? _black : _white,
-        surface: isDark ? const Color(0xFF121212) : _white,
-        onSurface: isDark ? _white : _black,
-        outline: isDark ? _darkSecondaryContainer : _lightSecondaryContainer,
-        shadow: isDark ? const Color(0xFF000000) : const Color(0x82000000),
-        primaryContainer:
-            isDark ? _darkPrimaryContainer : _lightPrimaryContainer,
-        secondaryContainer:
-            isDark ? _darkSecondaryContainer : _lightSecondaryContainer,
-        tertiaryContainer:
-            isDark ? _darkTertiaryContainer : _lightTertiaryContainer,
-        errorContainer: isDark ? _darkErrorContainer : _lightErrorContainer,
-        onErrorContainer: isDark ? _white : _black,
-      );
+    brightness: brightness(isDark: isDark),
+    primary: isDark ? darkPrimaryColor : lightPrimaryColor,
+    onPrimary: _white,
+    secondary: isDark ? darkSecondaryColor : lightSecondaryColor,
+    onSecondary: isDark ? _white : _black,
+    error: isDark ? _darkErrorColor : _lightErrorColor,
+    onError: isDark ? _black : _white,
+    surface: isDark ? const Color(0xFF121212) : _white,
+    onSurface: isDark ? _white : _black,
+    outline: isDark ? _darkSecondaryContainer : _lightSecondaryContainer,
+    shadow: isDark ? const Color(0xFF000000) : const Color(0x82000000),
+    primaryContainer: isDark ? _darkPrimaryContainer : _lightPrimaryContainer,
+    secondaryContainer: isDark
+        ? _darkSecondaryContainer
+        : _lightSecondaryContainer,
+    tertiaryContainer: isDark
+        ? _darkTertiaryContainer
+        : _lightTertiaryContainer,
+    errorContainer: isDark ? _darkErrorContainer : _lightErrorContainer,
+    onErrorContainer: isDark ? _white : _black,
+  );
 
-//! text styles
+  //! text styles
   static TextTheme textTheme({bool isDark = false}) => TextTheme(
-        titleLarge: _titleLarge(isDark: isDark),
-        titleMedium: _titleMedium(isDark: isDark),
-        titleSmall: _titleSmall(isDark: isDark),
-        bodySmall: _bodySmall(isDark: isDark),
-        bodyMedium: _bodyMedium(isDark: isDark),
-        bodyLarge: _bodyLarge(isDark: isDark),
-      );
+    titleLarge: _titleLarge(isDark: isDark),
+    titleMedium: _titleMedium(isDark: isDark),
+    titleSmall: _titleSmall(isDark: isDark),
+    bodySmall: _bodySmall(isDark: isDark),
+    bodyMedium: _bodyMedium(isDark: isDark),
+    bodyLarge: _bodyLarge(isDark: isDark),
+  );
 
-//* bodies
+  //* bodies
   static TextStyle _bodySmall({bool isDark = false}) => TextStyle(
-        fontSize: 12.0.sp,
-        color: isDark ? _white : _black,
-        overflow: textOverflowEllipsis,
-        fontFamily: fontFamilyBarlowSemi,
-      );
+    fontSize: 12.0.sp,
+    color: isDark ? _white : _black,
+    overflow: textOverflowEllipsis,
+    fontFamily: fontFamilyBarlowSemi,
+  );
 
   static TextStyle _bodyMedium({bool isDark = false}) =>
       _bodySmall(isDark: isDark).copyWith(fontSize: 14.0.sp);
 
   static TextStyle _bodyLarge({bool isDark = false}) =>
-      _bodySmall(isDark: isDark).copyWith(
-        fontSize: 16.0.sp,
-      );
+      _bodySmall(isDark: isDark).copyWith(fontSize: 16.0.sp);
 
-//* titles
+  //* titles
   static TextStyle _titleSmall({bool isDark = false}) => TextStyle(
-        fontSize: 14.0.sp,
-        color: isDark ? _white : _black,
-        fontWeight: FontWeight.bold,
-        overflow: textOverflowEllipsis,
-        fontFamily: fontFamilyBarlowSemi,
-      );
+    fontSize: 14.0.sp,
+    color: isDark ? _white : _black,
+    fontWeight: FontWeight.bold,
+    overflow: textOverflowEllipsis,
+    fontFamily: fontFamilyBarlowSemi,
+  );
 
   static TextStyle _titleMedium({bool isDark = false}) =>
       _titleSmall(isDark: isDark).copyWith(fontSize: 16.0.sp);
@@ -100,38 +99,39 @@ class WidgetThemes {
   static TextStyle _titleLarge({bool isDark = false}) =>
       _titleSmall(isDark: isDark).copyWith(fontSize: 22.0.sp);
 
-//! app bar
+  //! app bar
   static AppBarTheme appBarTheme({bool isDark = false}) => AppBarTheme(
-        backgroundColor: isDark
-            ? darkScaffoldBackgroundColor.withValues(alpha: 0.95)
-            : lightScaffoldBackgroundColor.withValues(alpha: 0.95),
-        iconTheme: iconTheme(isDark: isDark),
-        titleTextStyle: _titleSmall(isDark: isDark).copyWith(fontSize: 20.0.sp),
-        centerTitle: true,
-      );
+    backgroundColor: isDark
+        ? darkScaffoldBackgroundColor.withValues(alpha: 0.95)
+        : lightScaffoldBackgroundColor.withValues(alpha: 0.95),
+    iconTheme: iconTheme(isDark: isDark),
+    titleTextStyle: _titleSmall(isDark: isDark).copyWith(fontSize: 20.0.sp),
+    centerTitle: true,
+  );
 
-//! drawer
-/*   static const DrawerThemeData drawerTheme = DrawerThemeData(
+  //! drawer
+  /*   static const DrawerThemeData drawerTheme = DrawerThemeData(
     backgroundColor: darkScaffoldBackgroundColor,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.horizontal(right: Radius.circular(kRadius20)),
     ),
   ); */
 
-/*   static const sliderTheme = SliderThemeData(
+  /*   static const sliderTheme = SliderThemeData(
     activeTrackColor: Colors.red,
     activeTickMarkColor: Colors.red,
   ); */
 
-/*   static const RadioThemeData radioThemeData = RadioThemeData(
+  /*   static const RadioThemeData radioThemeData = RadioThemeData(
     fillColor: WidgetStatePropertyAll(darkPrimaryColor),
   ); */
 
-//! bottom sheet theme
+  //! bottom sheet theme
   static BottomSheetThemeData bottomSheetTheme({bool isDark = false}) =>
       BottomSheetThemeData(
-        backgroundColor:
-            isDark ? darkScaffoldBackgroundColor : lightScaffoldBackgroundColor,
+        backgroundColor: isDark
+            ? darkScaffoldBackgroundColor
+            : lightScaffoldBackgroundColor,
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(K.rl)),
@@ -142,23 +142,21 @@ class WidgetThemes {
         ),
       );
 
-//! list tile
-  static ListTileThemeData listTileTheme({bool isDark = false}) =>
-      ListTileThemeData(
-        tileColor: colorScheme(isDark: isDark).tertiaryContainer,
-        selectedTileColor: colorScheme(isDark: isDark).primaryContainer,
-        titleTextStyle: _titleMedium(isDark: isDark),
-        subtitleTextStyle: _bodyMedium(isDark: isDark).copyWith(
-          color: isDark ? darkSecondaryHeaderColor : lightSecondaryHeaderColor,
-        ),
-        contentPadding:
-            EdgeInsets.symmetric(horizontal: 15.0.w, vertical: 5.0.h),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(K.rm),
-        ),
-      );
+  //! list tile
+  static ListTileThemeData listTileTheme({
+    bool isDark = false,
+  }) => ListTileThemeData(
+    tileColor: colorScheme(isDark: isDark).tertiaryContainer,
+    selectedTileColor: colorScheme(isDark: isDark).primaryContainer,
+    titleTextStyle: _titleMedium(isDark: isDark),
+    subtitleTextStyle: _bodyMedium(isDark: isDark).copyWith(
+      color: isDark ? darkSecondaryHeaderColor : lightSecondaryHeaderColor,
+    ),
+    contentPadding: EdgeInsets.symmetric(horizontal: 15.0.w, vertical: 5.0.h),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(K.rm)),
+  );
 
-//! text field
+  //! text field
   static InputDecorationTheme inputDecorationTheme({bool isDark = false}) =>
       InputDecorationTheme(
         // fillColor: colorScheme(isDark: isDark).secondaryContainer,
@@ -178,9 +176,9 @@ class WidgetThemes {
           color: colorScheme(isDark: isDark).error,
         ),
         errorMaxLines: 3,
-        helperStyle: _bodySmall(isDark: isDark).copyWith(
-          overflow: TextOverflow.clip,
-        ),
+        helperStyle: _bodySmall(
+          isDark: isDark,
+        ).copyWith(overflow: TextOverflow.clip),
         helperMaxLines: 3,
         floatingLabelStyle: const TextStyle(fontFamily: fontFamilyBarlowSemi),
         floatingLabelAlignment: FloatingLabelAlignment.center,
@@ -191,8 +189,8 @@ class WidgetThemes {
           (states) => states.contains(WidgetState.focused)
               ? colorScheme(isDark: isDark).secondary
               : isDark
-                  ? Colors.white60.withValues(alpha: 0.5)
-                  : Colors.black45.withValues(alpha: 0.5),
+              ? Colors.white60.withValues(alpha: 0.5)
+              : Colors.black45.withValues(alpha: 0.5),
         ),
         focusedBorder: _outlineInputBorder(
           colorScheme(isDark: isDark).primary,
@@ -203,9 +201,7 @@ class WidgetThemes {
               ? Colors.white60.withValues(alpha: 0.2)
               : Colors.black45.withValues(alpha: 0.2),
         ),
-        errorBorder: _outlineInputBorder(
-          colorScheme(isDark: isDark).error,
-        ),
+        errorBorder: _outlineInputBorder(colorScheme(isDark: isDark).error),
         focusedErrorBorder: _outlineInputBorder(
           colorScheme(isDark: isDark).error,
           radius: 15,
@@ -216,14 +212,15 @@ class WidgetThemes {
         ),
       );
 
-  static OutlineInputBorder _outlineInputBorder(Color color,
-          {double radius = K.rm}) =>
-      OutlineInputBorder(
-        borderRadius: BorderRadius.circular(radius),
-        borderSide: BorderSide(color: color, width: K.bs),
-      );
+  static OutlineInputBorder _outlineInputBorder(
+    Color color, {
+    double radius = K.rm,
+  }) => OutlineInputBorder(
+    borderRadius: BorderRadius.circular(radius),
+    borderSide: BorderSide(color: color, width: K.bs),
+  );
 
-//! text button
+  //! text button
   static TextButtonThemeData textButtonTheme({bool isDark = false}) =>
       TextButtonThemeData(
         style: ButtonStyle(
@@ -244,31 +241,25 @@ class WidgetThemes {
         ),
       );
 
-//! icon
-  static IconThemeData iconTheme({bool isDark = false}) => IconThemeData(
-        color: isDark ? _white : _black,
-        size: 24.0.r,
-      );
+  //! icon
+  static IconThemeData iconTheme({bool isDark = false}) =>
+      IconThemeData(color: isDark ? _white : _black, size: 24.0.r);
 
-//! icon button
+  //! icon button
   static IconButtonThemeData iconButtonTheme({bool isDark = false}) =>
       IconButtonThemeData(
         style: ButtonStyle(iconSize: WidgetStatePropertyAll(24.0.r)),
       );
 
-//! card
+  //! card
   static CardThemeData cardTheme({bool isDark = false}) => CardThemeData(
-        color: isDark ? darkCardColor : lightCardColor,
-        shadowColor: colorScheme(isDark: isDark).shadow,
-        margin: EdgeInsets.symmetric(
-          vertical: 4.0.h,
-          horizontal: 4.0.w,
-        ),
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(K.rm)),
-      );
+    color: isDark ? darkCardColor : lightCardColor,
+    shadowColor: colorScheme(isDark: isDark).shadow,
+    margin: EdgeInsets.symmetric(vertical: 4.0.h, horizontal: 4.0.w),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(K.rm)),
+  );
 
-//! elevated button
+  //! elevated button
   static ElevatedButtonThemeData elevatedButtonTheme({bool isDark = false}) =>
       ElevatedButtonThemeData(
         style: ButtonStyle(
@@ -294,8 +285,8 @@ class WidgetThemes {
         ),
       );
 
-//! outlined button
-/*   static final OutlinedButtonThemeData outlinedButtonTheme =
+  //! outlined button
+  /*   static final OutlinedButtonThemeData outlinedButtonTheme =
       OutlinedButtonThemeData(
     style: ButtonStyle(
       side: const WidgetStatePropertyAll(BorderSide(color: Colors.white10)),
@@ -316,8 +307,8 @@ class WidgetThemes {
     ),
   ); */
 
-//! snack bar
-/*   static SnackBarThemeData snackBarTheme({bool isDark = false}) =>
+  //! snack bar
+  /*   static SnackBarThemeData snackBarTheme({bool isDark = false}) =>
       SnackBarThemeData(
         showCloseIcon: true,
         backgroundColor: _darkTertiaryContainer,
@@ -327,16 +318,16 @@ class WidgetThemes {
         behavior: SnackBarBehavior.floating,
       ); */
 
-//! circle avatar
-/*   static ChipThemeData chipTheme({bool isDark = false}) => ChipThemeData(
+  //! circle avatar
+  /*   static ChipThemeData chipTheme({bool isDark = false}) => ChipThemeData(
         // brightness: Brightness.dark,
         backgroundColor: darkSecondaryColor,
         iconTheme: iconTheme().copyWith(color: Colors.black),
       );
  */
 
-//! floating action button
-/*   static FloatingActionButtonThemeData fABThemeData({bool isDark = false}) =>
+  //! floating action button
+  /*   static FloatingActionButtonThemeData fABThemeData({bool isDark = false}) =>
       FloatingActionButtonThemeData(
         // brightness: Brightness.dark,
         // backgroundColor: darkSecondaryColor,
@@ -359,8 +350,9 @@ class WidgetThemes {
   //! popup menu button
   static PopupMenuThemeData popupMenuTheme({bool isDark = false}) =>
       PopupMenuThemeData(
-        color:
-            isDark ? darkScaffoldBackgroundColor : lightScaffoldBackgroundColor,
+        color: isDark
+            ? darkScaffoldBackgroundColor
+            : lightScaffoldBackgroundColor,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(K.rm)),
         ),
@@ -382,7 +374,7 @@ class WidgetThemes {
   //! dialog theme
   // static DialogTheme dialogTheme({bool isDark = false}) => DialogTheme();
 
-//! configs
+  //! configs
   static const TextOverflow textOverflowEllipsis = TextOverflow.ellipsis;
   // TODO font generated
   static const String fontFamilyBarlowSemi = 'FontFamily.barlowSemiCondensed';

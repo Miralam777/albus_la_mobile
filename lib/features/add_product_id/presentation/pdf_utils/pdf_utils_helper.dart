@@ -14,6 +14,7 @@ import 'package:albus_la_mobile/gen/assets.gen.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
+import 'package:pdf/pdf.dart' as pw;
 import 'package:pdf/widgets.dart';
 import 'package:printing/printing.dart';
 import 'package:image/image.dart' as img;
@@ -68,16 +69,49 @@ class PdfUtilsHelper {
       )).buffer.asUint8List(),
     );
 
-    final backgroundImage = MemoryImage(
+    final englishFlag = MemoryImage(
+      (await rootBundle.load(
+        Assets.images.flagOfTheUnitedKingdom.path,
+      )).buffer.asUint8List(),
+    );
+
+    /*    final childSvgImage = MemoryImage(
+      (await rootBundle.load(
+        Assets.productImages.carLabelV1V2,
+      )).buffer.asUint8List(),
+    ); */
+
+    /*    final backgroundImage = MemoryImage(
       (await rootBundle.load(
         Assets.images.cardBgImage.path,
       )).buffer.asUint8List(),
-    );
+    ); */
 
     final callWaveIcon = MemoryImage(
       (await rootBundle.load(
         Assets.icons.app.callWave.path,
       )).buffer.asUint8List(),
+    );
+
+    final svgImage = await rootBundle.loadString(
+      Assets.productImages.carLabelV1V2,
+    );
+
+    /*  final monoRegular = Font.ttf(
+      await rootBundle.load('assets/fonts/JetBrainsMono-Regular.ttf'),
+    );
+    final monoBold = Font.ttf(
+      await rootBundle.load('assets/fonts/JetBrainsMono-Bold.ttf'),
+    ); */
+
+    final monoRegular = await PdfGoogleFonts.jetBrainsMonoRegular();
+    final monoBold = await PdfGoogleFonts.jetBrainsMonoBold();
+
+    final childSvgImage = SvgImage(
+      svg: svgImage,
+      customFontLookup: (family, style, weight) => family.contains('JetBrains')
+          ? (weight == 'bold' ? monoBold : monoRegular)
+          : null,
     );
 
     const format = PdfPageFormat.cm;
@@ -149,6 +183,7 @@ class PdfUtilsHelper {
         playStoreImage: playStoreImage,
         backgroundImage: backgroundImage,
       ), */
+      childSvgImage: childSvgImage,
       // ! car label
       child: testCarLabelPdfVerion == CarLabelPdfCsvType.v1
           ? _carLabelV1(
@@ -160,9 +195,10 @@ class PdfUtilsHelper {
               qrId: 'testQrId77',
               pin: '12345678',
               launchIcon: launchIcon,
-              appStoreImage: appStoreImage,
-              playStoreImage: playStoreImage,
+              // appStoreImage: appStoreImage,
+              // playStoreImage: playStoreImage,
               callWaveIcon: callWaveIcon,
+              englishFlag: englishFlag,
             )
           : _carLabelV2(
               index: null,
@@ -350,9 +386,10 @@ class PdfUtilsHelper {
                           qrId: pageProducts[i].id,
                           pin: pageProducts[i].pin,
                           launchIcon: launchIcon,
-                          appStoreImage: appStoreImage,
-                          playStoreImage: playStoreImage,
+                          // appStoreImage: appStoreImage,
+                          // playStoreImage: playStoreImage,
                           callWaveIcon: callWaveIcon,
+                          englishFlag: englishFlag,
                         );
                       }),
                     ),
@@ -384,9 +421,8 @@ class PdfUtilsHelper {
     required String? pin,
     required String? qrId,
     required MemoryImage launchIcon,
-    required MemoryImage appStoreImage,
-    required MemoryImage playStoreImage,
     required MemoryImage callWaveIcon,
+    required MemoryImage englishFlag,
   }) {
     final paddging = 0.3 * format;
 
@@ -396,10 +432,9 @@ class PdfUtilsHelper {
           ? EdgeInsets.symmetric(vertical: 5.0, horizontal: 7.0)
           : EdgeInsets.zero,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(K.rm),
+        borderRadius: BorderRadius.circular(12.0),
         border: Border.all(color: PdfColors.grey600),
       ),
-
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: .center,
@@ -428,11 +463,10 @@ class PdfUtilsHelper {
             width: 6.0 * format,
             alignment: Alignment.topCenter,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(K.rl + 1.7),
+              borderRadius: BorderRadius.circular(22.0 + 1.7),
               gradient: const LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                // stops: [0.0, 1.0],
                 colors: [
                   PdfColor.fromInt(0xFF00274F),
                   PdfColor.fromInt(0xFF0D4280),
@@ -443,7 +477,7 @@ class PdfUtilsHelper {
               margin: EdgeInsets.all(2.0),
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(K.rl),
+                borderRadius: BorderRadius.circular(22.0),
                 border: Border.all(color: PdfColors.white, width: 1.7),
               ),
               child: Column(
@@ -468,7 +502,9 @@ class PdfUtilsHelper {
                           ),
                         ),
                       ),
+
                       SizedBox(width: 5.0),
+
                       Container(
                         height: 27.0,
                         width: 27.0,
@@ -488,7 +524,7 @@ class PdfUtilsHelper {
                     ],
                   ),
 
-                  //! ************** contact texts container
+                  //! ************** contact texts
                   Text(
                     carLabelPdfLocale.contactSubtitle,
                     style: TextStyle(
@@ -501,28 +537,58 @@ class PdfUtilsHelper {
                     ),
                   ),
 
+                  Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.only(top: 2.0),
+                    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(3.0),
+                      gradient: RadialGradient(
+                        radius: 12,
+                        colors: [PdfColors.white, PdfColors.grey900],
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image(englishFlag, width: 0.4 * format),
+
+                        SizedBox(width: 4.0),
+
+                        Text(
+                          // TODO: from model text and when if en don't show
+                          'CONTACT VEHICLE OWNER',
+                          style: TextStyle(font: font, fontSize: 8.0),
+                        ),
+                      ],
+                    ),
+                  ),
+
                   //! ************** id and  qrcode container
                   SizedBox(height: paddging * 0.5),
+
                   Text(
                     'ID: $qrId',
                     style: TextStyle(
-                      fontSize: 8.0,
+                      fontSize: 6.0,
                       font: idFont,
                       color: PdfColors.white,
                       fontWeight: FontWeight.normal,
                     ),
                   ),
+
                   SizedBox(height: paddging * 0.5),
 
                   Container(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(7.0),
                     decoration: BoxDecoration(
                       color: PdfColors.white,
-                      borderRadius: BorderRadius.circular(K.rm),
+                      borderRadius: BorderRadius.circular(6.0),
                     ),
                     child: BarcodeWidget(
-                      height: 2.5 * format,
-                      width: 2.5 * format,
+                      height: 2.4 * format,
+                      width: 2.4 * format,
                       padding: EdgeInsets.zero,
                       data: '${K.lookAppMsgBaseUrl}$qrId',
                       barcode: Barcode.qrCode(),
@@ -530,12 +596,14 @@ class PdfUtilsHelper {
                   ),
 
                   //! ************** look app logo and name and appstors icons
-                  SizedBox(height: paddging * 0.7),
+                  SizedBox(height: paddging * 0.6),
+
                   Image(launchIcon, width: 1.2 * format),
+
                   Text(
                     'LookApp',
                     style: TextStyle(
-                      fontSize: 13.0,
+                      fontSize: 12.0,
                       fontWeight: FontWeight.bold,
                       color: PdfColors.white,
                       letterSpacing: 0,
@@ -574,7 +642,7 @@ class PdfUtilsHelper {
           ? EdgeInsets.symmetric(vertical: 5.0 + 2.5, horizontal: 5.0)
           : EdgeInsets.zero,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(K.rm),
+        borderRadius: BorderRadius.circular(12.0),
         border: Border.all(color: PdfColors.grey600),
       ),
 
@@ -607,7 +675,7 @@ class PdfUtilsHelper {
             width: 9.5 * format,
             alignment: Alignment.topCenter,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(K.rl + 2.0),
+              borderRadius: BorderRadius.circular(22.0 + 2.0),
               gradient: const LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -621,7 +689,7 @@ class PdfUtilsHelper {
               margin: EdgeInsets.all(3.0),
               padding: EdgeInsets.symmetric(horizontal: 15.0),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(K.rl),
+                borderRadius: BorderRadius.circular(22.0),
                 border: Border.all(color: PdfColors.white, width: 2.0),
               ),
               child: Column(
@@ -698,7 +766,7 @@ class PdfUtilsHelper {
                     padding: const EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       color: PdfColors.white,
-                      borderRadius: BorderRadius.circular(K.rm),
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
                     child: BarcodeWidget(
                       height: 4.0 * format,
@@ -901,7 +969,7 @@ class PdfUtilsHelper {
                 margin: const EdgeInsets.only(top: 10.0, bottom: 5.0),
                 decoration: BoxDecoration(
                   color: PdfColors.white,
-                  borderRadius: BorderRadius.circular(K.rm),
+                  borderRadius: BorderRadius.circular(12.0),
                 ),
                 child: BarcodeWidget(
                   height: 2.5 * format,
@@ -1067,8 +1135,11 @@ class PdfUtilsHelper {
     required String producktLenght,
     String? groupNr,
     required MemoryImage launchIcon,
+    Widget? childSvgImage,
     required Widget child,
-  }) {
+  }) async {
+    print('======> childSvgImage');
+    print(childSvgImage);
     final nr = groupNr ?? (ProductsPdfBtmSheetRoutes.group?.groupNr ?? '-');
 
     pdf.addPage(
@@ -1117,7 +1188,11 @@ class PdfUtilsHelper {
                   ],
                 ),
                 SizedBox(height: 50.0),
-                child,
+                if (childSvgImage != null)
+                  childSvgImage
+                // SvgImage(svg: Assets.productImages.carLabelV1V2, height: 250)
+                else
+                  child,
                 SizedBox(height: 50.0),
                 // TODO: text
                 Text(

@@ -21,6 +21,10 @@ class $AssetsIconsGen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/Flag_of_the_United_Kingdom.png
+  AssetGenImage get flagOfTheUnitedKingdom =>
+      const AssetGenImage('assets/images/Flag_of_the_United_Kingdom.png');
+
   /// File path: assets/images/app_store.png
   AssetGenImage get appStore =>
       const AssetGenImage('assets/images/app_store.png');
@@ -59,6 +63,7 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
+    flagOfTheUnitedKingdom,
     appStore,
     appStoreDark,
     cardBgImage,
@@ -77,8 +82,11 @@ class $AssetsProductImagesGen {
   AssetGenImage get carLabelV1 =>
       const AssetGenImage('assets/product_images/car_label_v1.png');
 
+  /// File path: assets/product_images/car_label_v1_v2.svg
+  String get carLabelV1V2 => 'assets/product_images/car_label_v1_v2.svg';
+
   /// List of all assets
-  List<AssetGenImage> get values => [carLabelV1];
+  List<dynamic> get values => [carLabelV1, carLabelV1V2];
 }
 
 class $AssetsSoundsGen {

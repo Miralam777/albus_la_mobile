@@ -53,6 +53,9 @@ class CarLabelPdfCsvUtils {
     final callWaveIconBytes = (await rootBundle.load(
       Assets.icons.app.callWave.path,
     )).buffer.asUint8List();
+    final englishFlag = (await rootBundle.load(
+      Assets.images.flagOfTheUnitedKingdom.path,
+    )).buffer.asUint8List();
 
     // Configuration
     const labelsPerPage = 9;
@@ -89,6 +92,7 @@ class CarLabelPdfCsvUtils {
         'products': chunkProducts.map((p) => p.toJsonGenPdf()).toList(),
         'launchIconBytes': launchIconBytes,
         'callWaveIconBytes': callWaveIconBytes,
+        'englishFlag': englishFlag,
         'carLabelPdfLocale': carLabelPdfLocale.toJson(),
         'labelsPerPage': labelsPerPage,
         'isFirstChunk': chunkIndex == 0,
@@ -163,6 +167,7 @@ class CarLabelPdfCsvUtils {
     final labelsPerPage = data['labelsPerPage'] as int;
     final launchIcon = MemoryImage(data['launchIconBytes'] as Uint8List);
     final callWaveIcon = MemoryImage(data['callWaveIconBytes'] as Uint8List);
+    final englishFlag = MemoryImage(data['englishFlag'] as Uint8List);
     final carLabelPdfLocale = CarLabelPdfLocaleModel.fromJson(
       data['carLabelPdfLocale'],
     );
@@ -205,6 +210,7 @@ class CarLabelPdfCsvUtils {
           pin: '12345678',
           launchIcon: launchIcon,
           callWaveIcon: callWaveIcon,
+          englishFlag: englishFlag,
         ),
       );
     }
@@ -249,6 +255,7 @@ class CarLabelPdfCsvUtils {
                           pin: pageProducts[i].pin,
                           launchIcon: launchIcon,
                           callWaveIcon: callWaveIcon,
+                          englishFlag: englishFlag,
                         );
                       }),
                     ),
@@ -272,7 +279,7 @@ class CarLabelPdfCsvUtils {
     return pdf.save();
   }
 
-  static Container _carLabelV1({
+  /*   static Container _carLabelV1({
     int? index,
     required CarLabelPdfLocaleModel carLabelPdfLocale,
     required Font font,
@@ -437,6 +444,214 @@ class CarLabelPdfCsvUtils {
                     style: TextStyle(
                       font: font,
                       fontSize: 13.0,
+                      fontWeight: FontWeight.bold,
+                      color: PdfColors.white,
+                      letterSpacing: 0,
+                    ),
+                  ),
+
+                  SizedBox(height: paddging * 1.1),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  } */
+
+  static Container _carLabelV1({
+    int? index,
+    required CarLabelPdfLocaleModel carLabelPdfLocale,
+    required Font font,
+    required Font idFont,
+    required double format,
+    required String? pin,
+    required String? qrId,
+    required MemoryImage launchIcon,
+    required MemoryImage callWaveIcon,
+    required MemoryImage englishFlag,
+  }) {
+    final paddging = 0.3 * format;
+
+    return Container(
+      margin: EdgeInsets.all(5.0),
+      padding: index == null
+          ? EdgeInsets.symmetric(vertical: 5.0, horizontal: 7.0)
+          : EdgeInsets.zero,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(color: PdfColors.grey600),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: .center,
+        children: [
+          //! Ativation code text
+          Container(
+            width: 6.0 * format,
+            padding: EdgeInsets.only(bottom: 4.0),
+            alignment: Alignment.center,
+            child: Text(
+              '${carLabelPdfLocale.activationCodeTitle}: $pin',
+              style: TextStyle(
+                height: 0.0,
+                letterSpacing: 0.0,
+                font: font,
+                fontWeight: FontWeight.bold,
+                fontSize: 9.0,
+              ),
+            ),
+          ),
+
+          SizedBox(height: 5.0),
+
+          //! label gradient container
+          Container(
+            width: 6.0 * format,
+            alignment: Alignment.topCenter,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(22.0 + 1.7),
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  PdfColor.fromInt(0xFF00274F),
+                  PdfColor.fromInt(0xFF0D4280),
+                ],
+              ),
+            ),
+            child: Container(
+              margin: EdgeInsets.all(2.0),
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(22.0),
+                border: Border.all(color: PdfColors.white, width: 1.7),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: paddging * 1.5),
+
+                  Row(
+                    mainAxisAlignment: .center,
+                    crossAxisAlignment: .end,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          carLabelPdfLocale.contactTitle,
+                          style: TextStyle(
+                            height: 0.0,
+                            letterSpacing: 0.0,
+                            color: PdfColors.white,
+                            font: font,
+                            fontWeight: FontWeight.bold,
+                            fontSize: carLabelPdfLocale.contactTitleFontSize,
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(width: 5.0),
+
+                      Container(
+                        height: 27.0,
+                        width: 27.0,
+                        decoration: BoxDecoration(
+                          color: PdfColors.green800,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: PdfColors.white,
+                            width: 0.7,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(3.0),
+                          child: Image(callWaveIcon),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  //! ************** contact texts
+                  Text(
+                    carLabelPdfLocale.contactSubtitle,
+                    style: TextStyle(
+                      height: 0.0,
+                      letterSpacing: 0.0,
+                      color: PdfColors.white,
+                      font: font,
+                      fontWeight: FontWeight.bold,
+                      fontSize: carLabelPdfLocale.contactSubtitleFontSize,
+                    ),
+                  ),
+
+                  Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.only(top: 2.0),
+                    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(3.0),
+                      gradient: RadialGradient(
+                        radius: 12,
+                        colors: [PdfColors.white, PdfColors.grey900],
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image(englishFlag, width: 0.4 * format),
+
+                        SizedBox(width: 4.0),
+
+                        Text(
+                          // TODO: from model text and when if en don't show
+                          'CONTACT VEHICLE OWNER',
+                          style: TextStyle(font: font, fontSize: 8.0),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  //! ************** id and  qrcode container
+                  SizedBox(height: paddging * 0.5),
+
+                  Text(
+                    'ID: $qrId',
+                    style: TextStyle(
+                      fontSize: 6.0,
+                      font: idFont,
+                      color: PdfColors.white,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+
+                  SizedBox(height: paddging * 0.5),
+
+                  Container(
+                    padding: const EdgeInsets.all(7.0),
+                    decoration: BoxDecoration(
+                      color: PdfColors.white,
+                      borderRadius: BorderRadius.circular(6.0),
+                    ),
+                    child: BarcodeWidget(
+                      height: 2.4 * format,
+                      width: 2.4 * format,
+                      padding: EdgeInsets.zero,
+                      data: '${K.lookAppMsgBaseUrl}$qrId',
+                      barcode: Barcode.qrCode(),
+                    ),
+                  ),
+
+                  //! ************** look app logo and name and appstors icons
+                  SizedBox(height: paddging * 0.6),
+
+                  Image(launchIcon, width: 1.2 * format),
+
+                  Text(
+                    'LookApp',
+                    style: TextStyle(
+                      fontSize: 12.0,
                       fontWeight: FontWeight.bold,
                       color: PdfColors.white,
                       letterSpacing: 0,
@@ -893,6 +1108,9 @@ class CarLabelPdfCsvUtils {
     final callWaveIcon = (await rootBundle.load(
       Assets.icons.app.callWave.path,
     )).buffer.asUint8List();
+    final englishFlag = (await rootBundle.load(
+      Assets.images.flagOfTheUnitedKingdom.path,
+    )).buffer.asUint8List();
 
     final font = await PdfGoogleFonts.jetBrainsMonoBold();
     final idFont = await PdfGoogleFonts.jetBrainsMonoBold();
@@ -917,6 +1135,7 @@ class CarLabelPdfCsvUtils {
         pin: '12345678',
         launchIcon: MemoryImage(launchIconBytes),
         callWaveIcon: MemoryImage(callWaveIcon),
+        englishFlag: MemoryImage(englishFlag),
       ),
     );
 
@@ -940,6 +1159,35 @@ class CarLabelPdfCsvUtils {
       Assets.icons.app.callWave.path,
     )).buffer.asUint8List();
 
+    final englishFlag = (await rootBundle.load(
+      Assets.images.flagOfTheUnitedKingdom.path,
+    )).buffer.asUint8List();
+
+    final svgImage = await rootBundle.loadString(
+      Assets.productImages.carLabelV1V2,
+    );
+
+    final monoRegular = Font.ttf(
+      await rootBundle.load('assets/fonts/JetBrainsMono-Regular.ttf'),
+    );
+    final monoBold = Font.ttf(
+      await rootBundle.load('assets/fonts/JetBrainsMono-Bold.ttf'),
+    );
+
+    final childSvgImage = SvgImage(
+      svg: svgImage,
+      customFontLookup: (family, style, weight) => family.contains('JetBrains')
+          ? (weight == 'bold' ? monoBold : monoRegular)
+          : null,
+    );
+
+    /* 
+    final childSvgImage = MemoryImage(
+      (await rootBundle.load(
+        Assets.productImages.carLabelV1V2,
+      )).buffer.asUint8List(),
+    ); */
+
     final font = await PdfGoogleFonts.jetBrainsMonoBold();
     final idFont = await PdfGoogleFonts.jetBrainsMonoBold();
     const format = PdfPageFormat.cm;
@@ -955,6 +1203,7 @@ class CarLabelPdfCsvUtils {
       producktLenght: genProducts.length.toString(),
       groupNr: group?.groupNr.toString(),
       launchIcon: MemoryImage(launchIconBytes),
+      childSvgImage: childSvgImage,
       child: switch (version) {
         'v1' => _carLabelV1(
           carLabelPdfLocale: localeModel.pdfLocaleModel.carLabel,
@@ -965,6 +1214,7 @@ class CarLabelPdfCsvUtils {
           pin: '12345678',
           launchIcon: MemoryImage(launchIconBytes),
           callWaveIcon: MemoryImage(callWaveIcon),
+          englishFlag: MemoryImage(englishFlag),
         ),
         'v2' => _carLabelV2(
           carLabelPdfLocale: localeModel.pdfLocaleModel.carLabel,
@@ -1005,16 +1255,16 @@ class CarLabelPdfCsvUtils {
   //! ******************* gen csv *******************
   /// Generate CSV with index, activationCode, id, qrcode, title and secondaryTitle for all products
   static Future<File> genCsv() async {
-    final locale = ProductsPdfBtmSheetRoutes.locale;
+    // final locale = ProductsPdfBtmSheetRoutes.locale;
     final groupNr = ProductsPdfBtmSheetRoutes.group?.groupNr != null
         ? (ProductsPdfBtmSheetRoutes.group?.groupNr).toString()
         : null;
     final genProducts = ProductsPdfBtmSheetRoutes.genProducts;
-    final carLabelPdfLocale = AppLocaleServices.getLocaleByLangCode(
+    /*     final carLabelPdfLocale = AppLocaleServices.getLocaleByLangCode(
       locale,
     ).pdfLocaleModel.carLabel;
-
-    final rows = [
+ */
+    /*     final rows = [
       ['Index', 'Activation Code', 'ID', 'QR Code', 'Title', 'Secondary Title'],
       for (final product in genProducts)
         [
@@ -1024,6 +1274,18 @@ class CarLabelPdfCsvUtils {
           '${K.lookAppMsgBaseUrl}${product.id}',
           carLabelPdfLocale.contactTitle,
           carLabelPdfLocale.contactSubtitle,
+        ],
+    ]; */
+
+    // TODO: should be in model
+    final rows = [
+      ['index', 'activation_code', 'id', 'qr_code'],
+      for (final product in genProducts)
+        [
+          product.index,
+          'Aktivierungscode: ${product.pin}',
+          'ID: ${product.id}',
+          '${K.lookAppMsgBaseUrl}${product.id}',
         ],
     ];
     final csvData =
